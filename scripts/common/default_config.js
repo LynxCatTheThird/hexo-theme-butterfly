@@ -276,7 +276,6 @@ module.exports = {
     local_search: {
       preload: false,
       top_n_per_article: 1,
-      unescape: false,
       pagination: {
         enable: false,
         hitsPerPage: 8

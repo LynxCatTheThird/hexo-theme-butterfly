@@ -36,6 +36,7 @@ post:
   back_to_home: 返回首頁
 
 search:
+  retry: 重新載入搜尋
   title: 搜尋
   load_data: 資料載入中
   input_placeholder: 搜尋文章

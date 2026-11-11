@@ -36,6 +36,7 @@ post:
   back_to_home: Back to Home
 
 search:
+  retry: Reload search
   title: Search
   load_data: Loading Database
   input_placeholder: Search for Posts

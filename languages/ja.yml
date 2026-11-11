@@ -36,6 +36,7 @@ post:
   back_to_home: ホームに戻る
 
 search:
+  retry: 検索を再読み込み
   title: 検索
   load_data: データベースを読み込んでいます
   input_placeholder: 記事を検索

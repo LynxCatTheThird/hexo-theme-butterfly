@@ -20,7 +20,7 @@ const run = (file, args, env = process.env) => {
     for (const encrypted of [false, true]) {
       const slug = `component-test-${encrypted ? 'private' : 'public'}-${process.pid}`
       const content = fixture.replace(/^abbrlink:.*$/m, `abbrlink: ${slug}`)
-        .replace(/^title:.*$/m, `title: ${encrypted ? '' : 'Public '}Component integration test`)
+        .replace(/^title:.*$/m, `title: ${encrypted ? 'Component integration test' : 'Public Component integration test <T>'}`)
       const file = path.join(site, 'source/_posts', `${slug}.md`)
       fs.writeFileSync(file, encrypted ? content : content.replace(/^password:.*\n/m, ''), { flag: 'wx' })
       created.push(file)

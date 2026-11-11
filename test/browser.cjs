@@ -312,6 +312,19 @@ const server = http.createServer((req, res) => {
     await delayedNavigation.close()
     console.log('PASS: navigation dependencies do not block initial page setup')
 
+    const searchRetry = await context.newPage()
+    await searchRetry.route('**/*', route => route.request().resourceType() === 'image' ? route.abort() : route.fallback())
+    let searchAttempts = 0
+    await searchRetry.route('**/search.xml', route => ++searchAttempts === 1 ? route.abort() : route.fallback())
+    await searchRetry.goto(origin, { waitUntil: 'networkidle' })
+    await searchRetry.locator('#search-button .search').click()
+    await searchRetry.locator('.search-retry').click()
+    await searchRetry.locator('.local-search-input input').fill(chartMeta.json[0].headline.includes('<T>') ? '<T>' : chartMeta.json[0].headline)
+    await searchRetry.locator(`.local-search-hit-item a[href*="${chartPath}"]`).first().waitFor()
+    assert.equal(searchAttempts, 2)
+    await searchRetry.close()
+    console.log('PASS: search data can be retried after a failed download')
+
     const encryptedFile = htmlFiles.find(file => file.startsWith('article/') && /<title>Component integration test/.test(fs.readFileSync(path.join(root, file), 'utf8')))
     if (encryptedFile) {
       const encryptedPath = '/' + encryptedFile.replace(/index\.html$/, '')
@@ -319,7 +332,8 @@ const server = http.createServer((req, res) => {
       const componentErrors = []
       encrypted.on('pageerror', error => componentErrors.push(error.message))
       await encrypted.route('**/*', route => route.request().resourceType() === 'image' ? route.abort() : route.fallback())
-      await encrypted.goto(origin + encryptedPath, { waitUntil: 'networkidle' })
+      await encrypted.goto(origin + encryptedPath + '?highlight=1', { waitUntil: 'networkidle' })
+      assert.equal(await encrypted.locator('script#hbeData mark').count(), 0)
       assert.equal(await encrypted.locator('.echarts-container').count(), 0)
       assert.equal(await encrypted.evaluate(() => typeof window.echarts), 'undefined')
       await encrypted.locator('input[type=password]').fill('component-test-only')
@@ -329,6 +343,7 @@ const server = http.createServer((req, res) => {
         return chart && typeof window.echarts?.getInstanceByDom === 'function' && window.echarts.getInstanceByDom(chart) && document.querySelector('.chartjs-wrap canvas') && typeof window.Chart?.getChart === 'function' && window.Chart.getChart(document.querySelector('.chartjs-wrap canvas')) && document.querySelector('.mermaid-wrap svg') && document.querySelector('.katex-show')
       })
       assert.equal(await encrypted.locator('.katex-error').count(), 0)
+      assert.equal(await encrypted.locator('.katex mark, .mermaid-wrap mark, .echarts-container mark, .chartjs-src mark').count(), 0)
       assert.ok((await encrypted.locator('.katex').first().textContent()).includes('X'), 'KaTeX macro from site config must render')
       assert.ok(await encrypted.evaluate(() => {
         const el = document.querySelector('.echarts-container')

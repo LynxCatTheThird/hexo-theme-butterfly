@@ -36,6 +36,7 @@ post:
   back_to_home: 홈으로 돌아가기
 
 search:
+  retry: 검색 다시 불러오기
   title: 검색
   load_data: 데이터베이스 로드 중
   input_placeholder: 글 검색

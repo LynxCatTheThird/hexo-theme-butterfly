@@ -8,39 +8,23 @@
 class LocalSearch {
   constructor ({
     path = '',
-    unescape = false,
     top_n_per_article = 1
   }) {
     this.path = path
-    this.unescape = unescape
     this.top_n_per_article = top_n_per_article
     this.isfetched = false
     this.datas = null
-    this._unescapeDiv = unescape ? document.createElement('div') : null
-    this._processedKeywords = null
-  }
-
-  _processKeywords (keywords) {
-    if (this._processedKeywords) return this._processedKeywords
-    this._processedKeywords = keywords.map(word => {
-      if (this.unescape) {
-        this._unescapeDiv.innerText = word
-        return this._unescapeDiv.innerHTML
-      }
-      return word
-    })
-    return this._processedKeywords
+    this.fetchPromise = null
   }
 
   getIndexByWord (words, text, caseSensitive = false) {
     const index = []
     const included = new Set()
-    const processedWords = this._processKeywords(words)
 
     if (!caseSensitive) {
       text = text.toLowerCase()
     }
-    processedWords.forEach((word, i) => {
+    words.forEach((word, i) => {
       const wordLen = word.length
       if (wordLen === 0) return
       let startPosition = 0
@@ -102,8 +86,8 @@ class LocalSearch {
     return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
   }
 
-  highlightKeyword (val, slice, escape = false) {
-    const format = text => escape ? this.escapeHtml(text) : text
+  highlightKeyword (val, slice) {
+    const format = text => this.escapeHtml(text)
     const parts = []
     let index = slice.start
     for (const { position, length } of slice.hits) {
@@ -117,7 +101,6 @@ class LocalSearch {
 
   getResultItems (keywords) {
     const resultItems = []
-    this._processedKeywords = null
     // Compute highlight param once instead of per-article
     const highlightParam = keywords.join(' ')
     this.datas.forEach(({ title, content, url }) => {
@@ -168,7 +151,7 @@ class LocalSearch {
       url.searchParams.append('highlight', highlightParam)
 
       if (slicesOfTitle.length !== 0) {
-        resultItem += `<li class="local-search-hit-item"><a href="${this.escapeHtml(url.href)}"><span class="search-result-title">${this.highlightKeyword(title, slicesOfTitle[0], true)}</span>`
+        resultItem += `<li class="local-search-hit-item"><a href="${this.escapeHtml(url.href)}"><span class="search-result-title">${this.highlightKeyword(title, slicesOfTitle[0])}</span>`
       } else {
         resultItem += `<li class="local-search-hit-item"><a href="${this.escapeHtml(url.href)}"><span class="search-result-title">${this.escapeHtml(title)}</span>`
       }
@@ -189,15 +172,15 @@ class LocalSearch {
   }
 
   fetchData () {
+    if (this.fetchPromise) return this.fetchPromise
     const isXml = !this.path.endsWith('json')
-    fetch(this.path)
+    this.fetchPromise = fetch(this.path)
       .then(response => {
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
         return response.text()
       })
       .then(res => {
         // Get the contents from search data
-        this.isfetched = true
         this.datas = isXml
           ? [...new DOMParser().parseFromString(res, 'text/xml').querySelectorAll('entry')].map(element => ({
               title: element.querySelector('title').textContent,
@@ -205,22 +188,27 @@ class LocalSearch {
               url: element.querySelector('url').textContent
             }))
           : JSON.parse(res)
+        const decoder = document.createElement('textarea')
         // Only match articles with non-empty titles
         this.datas = this.datas.filter(data => data.title).map(data => {
           data.title = data.title.trim()
-          data.content = data.content ? data.content.trim().replace(/<[^>]+>/g, '') : ''
+          decoder.innerHTML = data.content ? data.content.trim().replace(/<[^>]+>/g, '') : ''
+          data.content = decoder.value
           data.url = decodeURIComponent(data.url).replace(/\/{2,}/g, '/')
           return data
         })
+        this.isfetched = true
         // Remove loading animation
         window.dispatchEvent(new Event('search:loaded'))
       })
       .catch(error => {
         console.error('Local search data fetch failed:', error)
-        this.isfetched = true
+        this.isfetched = false
         this.datas = []
         window.dispatchEvent(new Event('search:loaded'))
       })
+      .finally(() => { this.fetchPromise = null })
+    return this.fetchPromise
   }
 
   // Highlight by wrapping node in mark elements with the given class name
@@ -250,7 +238,7 @@ class LocalSearch {
     const walk = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null)
     const allNodes = []
     while (walk.nextNode()) {
-      if (!walk.currentNode.parentNode.matches('button, select, textarea, .mermaid')) allNodes.push(walk.currentNode)
+      if (!walk.currentNode.parentElement.closest('button, select, textarea, script, style, [hidden], svg, math, .katex, mjx-container, .mermaid, .mermaid-wrap')) allNodes.push(walk.currentNode)
     }
     allNodes.forEach(node => {
       const [indexOfNode] = this.getIndexByWord(keywords, node.nodeValue)
@@ -263,12 +251,11 @@ class LocalSearch {
 
 window.addEventListener('load', () => {
   // Search
-  const { path, top_n_per_article, unescape, languages, pagination } = GLOBAL_CONFIG.localSearch
+  const { path, top_n_per_article, languages, pagination } = GLOBAL_CONFIG.localSearch
   const enablePagination = pagination && pagination.enable
   const localSearch = new LocalSearch({
     path,
-    top_n_per_article,
-    unescape
+    top_n_per_article
   })
 
   const $input = document.querySelector('.local-search-input input')
@@ -279,7 +266,6 @@ window.addEventListener('load', () => {
   const $results = document.getElementById('local-search-results')
   const $pagination = document.getElementById('local-search-pagination')
   const $paginationList = document.querySelector('#local-search-pagination .ais-Pagination-list')
-  const isXml = !path.endsWith('json')
 
   // Pagination variables (only initialize if pagination is enabled)
   let currentPage = 0
@@ -429,7 +415,6 @@ window.addEventListener('load', () => {
   const inputEventFunction = () => {
     if (!localSearch.isfetched) return
     let searchText = $input.value.trim().toLowerCase()
-    isXml && (searchText = searchText.replace(/</g, '&lt;').replace(/>/g, '&gt;'))
 
     if (searchText !== '') $loadingStatus.hidden = false
 
@@ -477,7 +462,7 @@ window.addEventListener('load', () => {
     searchTimeout = setTimeout(inputEventFunction, 200)
   }
 
-  let loadFlag = false
+  let searchOpen = false
 
   const fixSafariHeight = () => {
     if (window.innerWidth < 768) {
@@ -500,15 +485,12 @@ window.addEventListener('load', () => {
   }
 
   const openSearch = () => {
+    searchOpen = true
     btf.overflowPaddingR.add()
     btf.animateIn($searchMask, 'to_show 0.5s')
     btf.animateIn($searchDialog, 'titleScale 0.5s')
     setTimeout(() => { $input.focus() }, 300)
-    if (!loadFlag) {
-      !localSearch.isfetched && localSearch.fetchData()
-      $input.addEventListener('input', debouncedInputEvent)
-      loadFlag = true
-    }
+    if (!localSearch.isfetched) localSearch.fetchData()
     // shortcut: ESC
     document.addEventListener('keydown', handleEscape)
 
@@ -517,6 +499,7 @@ window.addEventListener('load', () => {
   }
 
   const closeSearch = () => {
+    searchOpen = false
     btf.overflowPaddingR.remove()
     btf.animateOut($searchDialog, 'search_close .5s')
     btf.animateOut($searchMask, 'to_hide 0.5s')
@@ -529,6 +512,7 @@ window.addEventListener('load', () => {
   }
 
   const searchFnOnce = () => {
+    $input.addEventListener('input', debouncedInputEvent)
     document.querySelector('#local-search .search-close-button').addEventListener('click', closeSearch)
     $searchMask.addEventListener('click', closeSearch)
     if (GLOBAL_CONFIG.localSearch.preload) {
@@ -557,12 +541,26 @@ window.addEventListener('load', () => {
 
   window.addEventListener('search:loaded', () => {
     const $loadDataItem = document.getElementById('loading-database')
+    if (!$loadDataItem) return
+    if (!localSearch.isfetched) {
+      const retry = document.createElement('button')
+      retry.type = 'button'
+      retry.className = 'search-retry'
+      retry.textContent = languages.retry
+      retry.addEventListener('click', () => localSearch.fetchData())
+      $loadDataItem.replaceChildren(retry)
+      if (searchOpen) retry.focus({ preventScroll: true })
+      return
+    }
     $loadDataItem.nextElementSibling.style.visibility = 'visible'
     $loadDataItem.remove()
+    if (searchOpen) $input.focus({ preventScroll: true })
+    inputEventFunction()
   })
 
   searchClickFn()
   searchFnOnce()
+  btf.addGlobalFn('encrypt', () => localSearch.highlightSearchWords(document.getElementById('article-container')), 'search')
 
   window.addEventListener('theme:page-load', () => {
     !btf.isHidden($searchMask) && closeSearch()

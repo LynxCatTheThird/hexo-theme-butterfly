@@ -37,6 +37,7 @@ post:
   back_to_home: 返回首页
 
 search:
+  retry: 重新加载搜索
   title: 搜索
   load_data: 数据加载中
   input_placeholder: 搜索文章
