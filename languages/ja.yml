@@ -1,3 +1,4 @@
+# Modified in this fork.
 footer:
   framework: フレームワーク
   theme: テーマ
@@ -92,18 +93,15 @@ date_suffix:
   month: ヶ月前
 
 donate: 寄付
-share: 共有
 
 rightside:
   readmode_title: 読書モード
-  translate_title: 簡体字と繁体字の切り替え
   night_mode_title: ライトモード/ダークモード切り替え
   back_to_top: トップに戻る
   toc: 目次
   scroll_to_comment: コメントへ移動
   setting: 設定
   aside: シングルカラムとダブルカラムの切り替え
-  chat: チャット
 
 copy_copyright:
   author: 著者
@@ -111,11 +109,7 @@ copy_copyright:
   source: ソース
   info: 著作権は著者に帰属します。商業的利用の場合は著者に連絡して許可を得てください。非商業的利用の場合は出典を明記してください。
 
-Snackbar:
-  chs_to_cht: 繁体字に切り替えました
-  cht_to_chs: 簡体字に切り替えました
-  day_to_night: ダークモードに切り替えました
-  night_to_day: ライトモードに切り替えました
+chart_retry: グラフを再読み込み
 
 loading: ローディング中...
 load_more: もっと見る

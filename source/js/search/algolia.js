@@ -1,3 +1,4 @@
+// Modified in this fork.
 window.addEventListener('load', () => {
   const { algolia } = GLOBAL_CONFIG
   const { appId, apiKey, indexName, hitsPerPage = 5, languages } = algolia
@@ -83,7 +84,7 @@ window.addEventListener('load', () => {
   }
 
   const searchClickFn = () => {
-    btf.addEventListenerPjax(document.querySelector('#search-button > .search'), 'click', openSearch)
+    btf.addPageEventListener(document.querySelector('#search-button > .search'), 'click', openSearch)
   }
 
   const searchFnOnce = () => {
@@ -401,9 +402,6 @@ window.addEventListener('load', () => {
       toggleResultsVisibility(hasResults)
 
       // Refresh Pjax links
-      if (window.pjax) {
-        window.pjax.refresh($hits)
-      }
     } catch (error) {
       if (requestId !== searchRequestId) return
       console.error('Algolia search error:', error)
@@ -464,7 +462,7 @@ window.addEventListener('load', () => {
   searchClickFn()
   searchFnOnce()
 
-  window.addEventListener('pjax:complete', () => {
+  window.addEventListener('theme:page-load', () => {
     if (!btf.isHidden($searchMask)) closeSearch()
     searchClickFn()
   })

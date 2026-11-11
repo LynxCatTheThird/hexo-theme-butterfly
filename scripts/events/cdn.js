@@ -1,3 +1,4 @@
+// Modified in this fork.
 /**
  * Butterfly
  * Merge CDN
@@ -19,6 +20,9 @@ const loadPlugins = hexo => {
 hexo.extend.filter.register('before_generate', () => {
   const themeConfig = hexo.theme.config
   const { CDN } = themeConfig
+  if (!['local', 'custom'].includes(CDN.internal_provider)) {
+    throw new Error('Use local or a custom CDN for this fork’s internal scripts.')
+  }
 
   const thirdPartySrc = loadPlugins(hexo)
   const internalSrc = {
@@ -32,9 +36,14 @@ hexo.extend.filter.register('before_generate', () => {
       file: 'js/utils.js',
       version
     },
-    translate: {
+    navigation: {
       name: 'hexo-theme-butterfly',
-      file: 'js/tw_cn.js',
+      file: 'js/navigation.js',
+      version
+    },
+    echarts_runtime: {
+      name: 'hexo-theme-butterfly',
+      file: 'js/echarts.js',
       version
     },
     local_search: {

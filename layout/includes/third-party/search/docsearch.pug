@@ -1,3 +1,4 @@
+//- Modified in this fork.
 - const { placeholder, docsearch = {} } = theme.search
 - const { appId, apiKey, indexName, indices, option } = docsearch
 //- `indices` is supported since DocSearch v4.0 (multi-index search) and required by v5 (v5 removed `indexName`).
@@ -26,9 +27,9 @@
       }
 
       const searchClickFn = () => {
-        btf.addEventListenerPjax(document.querySelector('#search-button > .search'), 'click', handleClick)
+        btf.addPageEventListener(document.querySelector('#search-button > .search'), 'click', handleClick)
       }
 
       searchClickFn()
-      window.addEventListener('pjax:complete', searchClickFn)
+      window.addEventListener('theme:page-load', searchClickFn)
     })()

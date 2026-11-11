@@ -1,3 +1,4 @@
+// Modified in this fork.
 // Butterfly 主題默認配置
 // Default configuration for Butterfly theme
 
@@ -207,14 +208,6 @@ module.exports = {
     }
   },
   rightside_bottom: null,
-  translate: {
-    enable: false,
-    default: '繁',
-    defaultEncoding: 2,
-    translateDelay: 0,
-    msgToTraditionalChinese: '繁',
-    msgToSimplifiedChinese: '簡'
-  },
   readmode: true,
   darkmode: {
     enable: true,
@@ -248,20 +241,14 @@ module.exports = {
     min2read: true,
     total_wordcount: true
   },
-  busuanzi: {
+  visitor_counter: {
     site_uv: true,
     site_pv: true,
     page_pv: true,
-    element_id: {
-      site_uv: null,
-      site_pv: null,
-      page_pv: null
-    },
-    element_class: {
-      site_uv: null,
-      site_pv: null,
-      page_pv: null
-    }
+    api_url: 'https://events.vercount.one/api/v2/log',
+    timeout: 5000,
+    element_id: { site_uv: null, site_pv: null, page_pv: null },
+    element_class: { site_uv: null, site_pv: null, page_pv: null }
   },
   math: {
     use: null,
@@ -269,7 +256,12 @@ module.exports = {
     hide_scrollbar: false,
     mathjax: {
       enableMenu: true,
-      tags: 'none'
+      tags: 'none',
+      loader: {},
+      output: {},
+      tex: {},
+      chtml: { scale: 1.1 },
+      options: { lazyMargin: '200px' }
     },
     katex: {
       copy_tex: false
@@ -298,15 +290,6 @@ module.exports = {
       option: null
     }
   },
-  share: {
-    use: 'sharejs',
-    sharejs: {
-      sites: 'facebook,x,wechat,weibo,qq'
-    },
-    addtoany: {
-      item: 'facebook,x,wechat,sina_weibo,facebook_messenger,email,copy_link'
-    }
-  },
   comments: {
     use: null,
     text: true,
@@ -314,74 +297,16 @@ module.exports = {
     count: false,
     card_post_count: false
   },
-  disqus: {
-    shortname: null,
-    apikey: null
-  },
-  disqusjs: {
-    shortname: null,
-    apikey: null,
-    option: null
-  },
-  livere: {
-    uid: null
-  },
-  gitalk: {
-    client_id: null,
-    client_secret: null,
-    repo: null,
-    owner: null,
-    admin: null,
-    option: null
-  },
-  valine: {
-    appId: null,
-    appKey: null,
-    avatar: 'monsterid',
-    serverURLs: null,
-    bg: null,
-    visitor: false,
-    option: null
-  },
   waline: {
     serverURL: null,
     bg: null,
     pageview: false,
     option: null
   },
-  utterances: {
-    repo: null,
-    issue_term: 'pathname',
-    light_theme: 'github-light',
-    dark_theme: 'photon-dark',
-    js: null,
-    option: null
-  },
-  facebook_comments: {
-    app_id: null,
-    user_id: null,
-    pageSize: 10,
-    order_by: 'social',
-    lang: 'en_US'
-  },
   twikoo: {
     envId: null,
     region: null,
     visitor: false,
-    option: null
-  },
-  giscus: {
-    repo: null,
-    repo_id: null,
-    category_id: null,
-    light_theme: 'light',
-    dark_theme: 'dark',
-    js: null,
-    option: null
-  },
-  remark42: {
-    host: null,
-    siteId: null,
     option: null
   },
   artalk: {
@@ -390,56 +315,6 @@ module.exports = {
     visitor: false,
     vote: false,
     option: null
-  },
-  chat: {
-    use: null,
-    rightside_button: false,
-    button_hide_show: false
-  },
-  chatra: {
-    id: null
-  },
-  tidio: {
-    public_key: null
-  },
-  crisp: {
-    website_id: null
-  },
-  knocket: {
-    identifier: null
-  },
-  google_tag_manager: {
-    tag_id: null,
-    domain: 'https://www.googletagmanager.com'
-  },
-  baidu_analytics: null,
-  google_analytics: null,
-  cloudflare_analytics: null,
-  microsoft_clarity: null,
-  umami_analytics: {
-    enable: false,
-    serverURL: null,
-    script_name: 'script.js',
-    website_id: null,
-    option: null,
-    UV_PV: {
-      site_uv: false,
-      site_pv: false,
-      page_pv: false,
-      token: null
-    }
-  },
-  google_adsense: {
-    enable: false,
-    auto_ads: true,
-    js: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js',
-    client: null,
-    enable_page_level_ads: true
-  },
-  ad: {
-    index: null,
-    aside: null,
-    post: null
   },
   site_verification: null,
   category_ui: null,
@@ -521,6 +396,7 @@ module.exports = {
     mobile: false
   },
   lightbox: null,
+  lightbox_options: {},
   series: {
     enable: false,
     orderBy: 'title',
@@ -539,10 +415,19 @@ module.exports = {
       dark: 'dark'
     },
     open_in_new_tab: true,
-    zoom_pan: true
+    zoom_pan: true,
+    options: {}
+  },
+  echarts: {
+    enable: true,
+    height: 400,
+    init_options: { renderer: 'canvas' },
+    theme: { light: null, dark: 'dark' },
+    option: { animation: false }
   },
   chartjs: {
     enable: false,
+    options: {},
     fontColor: {
       light: 'rgba(0, 0, 0, 0.8)',
       dark: 'rgba(255, 255, 255, 0.8)'
@@ -562,17 +447,13 @@ module.exports = {
     border_radius: 3,
     light_bg_offset: 0
   },
-  pjax: {
+  navigation: {
     enable: false,
+    cache: true,
+    preload: false,
+    timeout: 10000,
     exclude: null
   },
-  snackbar: {
-    enable: false,
-    position: 'bottom-left',
-    bg_light: '#49b1f5',
-    bg_dark: '#1f1f1f'
-  },
-  instantpage: false,
   lazyload: {
     enable: false,
     native: false,

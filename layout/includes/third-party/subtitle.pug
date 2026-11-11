@@ -1,3 +1,4 @@
+//- Modified in this fork.
 - const { effect, source, sub, typed_option } = theme.subtitle
 - let subContent = typeof sub === 'string' ? [sub] : (sub || new Array())
 
@@ -62,7 +63,7 @@ script.
       }
     }
   }
-  btf.addGlobalFn('pjaxSendOnce', () => {
+  btf.addGlobalFn('pageCleanup', () => {
     window.typedJSFn._seq++
     typed && typed.destroy()
     window.typed = null

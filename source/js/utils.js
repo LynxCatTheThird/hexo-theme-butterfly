@@ -1,3 +1,4 @@
+// Modified in this fork.
 (() => {
   const btfFn = {
     debounce: (func, wait = 0, immediate = false) => {
@@ -79,19 +80,6 @@
           menu.style.paddingRight = ''
         }
       }
-    },
-
-    snackbarShow: (text, showAction = false, duration = 2000) => {
-      const { position, bgLight, bgDark } = GLOBAL_CONFIG.Snackbar
-      const bg = document.documentElement.getAttribute('data-theme') === 'light' ? bgLight : bgDark
-      Snackbar.show({
-        text,
-        backgroundColor: bg,
-        showAction,
-        duration,
-        pos: position,
-        customClass: 'snackbar-css'
-      })
     },
 
     diffDate: (inputDate, more = false) => {
@@ -187,16 +175,22 @@
       const service = GLOBAL_CONFIG.lightbox
 
       if (service === 'medium_zoom') {
-        const zoom = window.mediumZoomInstance || (window.mediumZoomInstance = mediumZoom({ background: 'var(--zoom-bg)' }))
+        if (typeof window.mediumZoom !== 'function') return
+        const zoom = window.mediumZoomInstance || (window.mediumZoomInstance = mediumZoom({ background: 'var(--zoom-bg)', ...GLOBAL_CONFIG.lightboxOptions }))
         zoom.attach(ele)
 
-        btf.addGlobalFn('pjaxSendOnce', () => {
+        btf.addGlobalFn('pageCleanup', () => {
           window.mediumZoomInstance && window.mediumZoomInstance.detach()
         }, 'mediumZoom')
         return
       }
 
       if (service === 'fancybox') {
+        if (typeof window.Fancybox?.bind !== 'function') return
+        btf.addGlobalFn('pageCleanup', () => {
+          Fancybox.destroy()
+          window.fancyboxRun = false
+        }, 'fancybox')
         ele.forEach(i => {
           if (i.parentNode.tagName !== 'A') {
             const dataSrc = i.dataset.lazySrc || i.src
@@ -206,24 +200,16 @@
         })
 
         if (!window.fancyboxRun) {
-          let options = ''
-          if (Fancybox.version < '6') {
-            options = {
-              Hash: false,
+          const options = {
+            Hash: false,
+            Carousel: {
+              transition: 'slide',
               Thumbs: {
                 showOnStart: false
               },
-              Images: {
-                Panzoom: {
-                  maxScale: 4
-                }
-              },
-              Carousel: {
-                transition: 'slide'
-              },
               Toolbar: {
                 display: {
-                  left: ['infobar'],
+                  left: ['counter'],
                   middle: [
                     'zoomIn',
                     'zoomOut',
@@ -231,48 +217,22 @@
                     'rotateCCW',
                     'rotateCW',
                     'flipX',
-                    'flipY'
+                    'flipY',
+                    'reset'
                   ],
-                  right: ['slideshow', 'thumbs', 'close']
+                  right: ['autoplay', 'thumbs', 'close']
                 }
               },
-              hideScrollbar: false
-            }
-          } else {
-            options = {
-              Hash: false,
-              Carousel: {
-                transition: 'slide',
-                Thumbs: {
-                  showOnStart: false
-                },
-                Toolbar: {
-                  display: {
-                    left: ['counter'],
-                    middle: [
-                      'zoomIn',
-                      'zoomOut',
-                      'toggle1to1',
-                      'rotateCCW',
-                      'rotateCW',
-                      'flipX',
-                      'flipY',
-                      'reset'
-                    ],
-                    right: ['autoplay', 'thumbs', 'close']
-                  }
-                },
-                Zoomable: {
-                  Panzoom: {
-                    maxScale: 4
-                  }
+              Zoomable: {
+                Panzoom: {
+                  maxScale: 4
                 }
-              },
-              hideScrollbar: false
-            }
+              }
+            },
+            hideScrollbar: false
           }
 
-          Fancybox.bind('[data-fancybox]', options)
+          Fancybox.bind('[data-fancybox]', { ...options, ...GLOBAL_CONFIG.lightboxOptions })
           window.fancyboxRun = true
         }
       }
@@ -296,10 +256,11 @@
 
     updateAnchor: anchor => {
       if (anchor !== window.location.hash) {
-        if (!anchor) anchor = location.pathname
+        if (!anchor) anchor = location.pathname + location.search
         const title = GLOBAL_CONFIG_SITE.title
         window.history.replaceState({
-          url: location.href,
+          ...window.history.state,
+          url: new URL(anchor, location.href).href,
           title
         }, title, anchor)
       }
@@ -345,21 +306,11 @@
       }
     })(),
 
-    addEventListenerPjax: (ele, event, fn, option = false) => {
+    addPageEventListener: (ele, event, fn, option = false) => {
       ele.addEventListener(event, fn, option)
-      btf.addGlobalFn('pjaxSendOnce', () => {
+      btf.addGlobalFn('pageCleanup', () => {
         ele.removeEventListener(event, fn, option)
       })
-    },
-
-    removeGlobalFnEvent: (key, parent = window) => {
-      const globalFn = parent.globalFn || {}
-      const keyObj = globalFn[key]
-      if (!keyObj) return
-
-      Object.keys(keyObj).forEach(i => keyObj[i]())
-
-      delete globalFn[key]
     },
 
     switchComments: (el = document, path) => {
@@ -370,12 +321,13 @@
       const postComment = el.querySelector('#post-comment')
       const handleSwitchBtn = () => {
         postComment.classList.toggle('move')
+        switchBtn.setAttribute('aria-checked', postComment.classList.contains('move'))
         if (!switchDone && typeof loadOtherComment === 'function') {
           switchDone = true
           loadOtherComment(el, path)
         }
       }
-      btf.addEventListenerPjax(switchBtn, 'click', handleSwitchBtn)
+      btf.addPageEventListener(switchBtn, 'click', handleSwitchBtn)
     }
   }
 

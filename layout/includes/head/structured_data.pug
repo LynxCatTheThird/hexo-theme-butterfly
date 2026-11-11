@@ -1,4 +1,6 @@
-if theme.structured_data
+//- Modified in this fork.
+- let jsonLdScript
+if theme.structured_data && theme.structured_data.enable
   if page.layout === 'post'
     -
       // https://developers.google.com/search/docs/appearance/structured-data/article
@@ -41,7 +43,7 @@ if theme.structured_data
 
       if (isRootOrSubdomain) {
         const domain = new URL(config.url).hostname;
-        const alternateNames = theme.structured_data.alternate_name || [];
+        const alternateNames = [...(theme.structured_data.alternate_name || [])];
 
         if (config.subtitle) {
           alternateNames.push(config.subtitle);
@@ -63,5 +65,6 @@ if theme.structured_data
       }
     -
 
-  script(type="application/ld+json").
-    !{jsonLdScript}
+  if jsonLdScript
+    script(type="application/ld+json").
+      !{jsonLdScript.replace(/</g, '\\u003c')}

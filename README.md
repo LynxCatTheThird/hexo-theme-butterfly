@@ -8,6 +8,8 @@
 
 # hexo-theme-butterfly
 
+This fork modifies navigation and component integrations. Its configuration is defined in `_config.yml`.
+
 A modern, elegant, and feature-rich theme for Hexo
 
 ![master version](https://img.shields.io/github/package-json/v/jerryc127/hexo-theme-butterfly/master?color=%231ab1ad&label=master)
@@ -51,31 +53,11 @@ A modern, elegant, and feature-rich theme for Hexo
 
 ### 💾 Installation
 
-#### Option 1: Git (Recommended)
-
-> 💡 **Tip**: If GitHub access is slow from mainland China, use the [Gitee mirror](https://gitee.com/immyw/hexo-theme-butterfly.git).
-
-Run the following in your Hexo blog root:
+Install this fork from the Hexo site directory:
 
 ```bash
-# Stable release (recommended)
-git clone -b master --depth 1 https://github.com/jerryc127/hexo-theme-butterfly.git themes/butterfly
+git clone -b dev --depth 1 https://github.com/LynxCatTheThird/hexo-theme-butterfly.git themes/butterfly
 ```
-
-```bash
-# Development branch (early access to new features)
-git clone -b dev --depth 1 https://github.com/jerryc127/hexo-theme-butterfly.git themes/butterfly
-```
-
-> 📁 If `themes/butterfly` already exists, remove or rename it first; `git clone` will fail if the target folder isn't empty.
-
-#### Option 2: npm
-
-```bash
-npm install hexo-theme-butterfly
-```
-
-> ⚠️ **Note**: npm doesn't create a folder under `themes/`; the theme goes into `node_modules/` instead.
 
 ### ⚙️ Enable & Configure
 
@@ -91,11 +73,9 @@ npm install hexo-theme-butterfly
    # Git install
    cp themes/butterfly/_config.yml _config.butterfly.yml
 
-   # npm install
-   cp node_modules/hexo-theme-butterfly/_config.yml _config.butterfly.yml
    ```
 
-   > 💡 Hexo 5+ automatically loads `_config.butterfly.yml` from the blog root. On Windows, use `copy themes\butterfly\_config.yml _config.butterfly.yml` for Git installs, or `copy node_modules\hexo-theme-butterfly\_config.yml _config.butterfly.yml` for npm installs.
+   > Hexo 5+ loads `_config.butterfly.yml` from the site directory.
    >
    > ⚠️ After this, edit only `_config.butterfly.yml`. Don't delete the theme's own `_config.yml`, and keep custom files and images out of the theme's `source/` folder — upgrades may overwrite them.
 
@@ -115,12 +95,6 @@ npm install hexo-theme-butterfly
 ```bash
 cd themes/butterfly
 git pull
-```
-
-**npm install**
-
-```bash
-npm update hexo-theme-butterfly
 ```
 
 Before upgrading, back up your config. After upgrading, check [Releases](https://github.com/jerryc127/hexo-theme-butterfly/releases) for `_config` changes and merge them into `_config.butterfly.yml`.
@@ -145,13 +119,12 @@ Before upgrading, back up your config. After upgrading, check [Releases](https:/
 - ✅ **Word count** — Shows the word count and estimated reading time
 - ✅ **Related posts** — Smart recommendations at the end of a post
 - ✅ **Outdated post warning** — Alerts readers when a post may be out of date
-- ✅ **Traditional/Simplified Chinese** — Convert between Traditional and Simplified Chinese
 - ✅ **Tag plugins** — Extra tags for richer content
 
 ### 🔍 Search & Navigation
 - ✅ **Multiple search options** — Algolia, local search, or DocSearch
 - ✅ **Built-in 404 page** — A polished error page
-- ✅ **PJAX** — Smooth page transitions
+- ✅ **Swup** — Smooth page transitions
 
 ### 🎨 Code Display
 - ✅ **Syntax highlighting** — Several built-in themes (darker, pale night, light, ocean)
@@ -159,16 +132,12 @@ Before upgrading, back up your config. After upgrading, check [Releases](https:/
 - ✅ **Math formulas** — MathJax and KaTeX support
 
 ### 💬 Social Interaction
-- ✅ **Multiple comment systems** — Disqus, Gitalk, Valine, Waline, Twikoo, Giscus, Artalk, and more
+- ✅ **Multiple comment systems** — Artalk, Twikoo and Waline
 - ✅ **Two comment systems at once** — Use two systems side by side
-- ✅ **Sharing** — Share.js and AddToAny
-- ✅ **Live chat** — Chatra, Tidio, or Crisp
 
 ### 📊 Analytics & Statistics
-- ✅ **Visit counter** — Busuanzi
-- ✅ **Site analytics** — Google Analytics, Baidu Analytics, Cloudflare Analytics, Microsoft Clarity, or Umami
+- ✅ **Visit counter** — Vercount API with custom element IDs
 - ✅ **Search engine verification** — Google and Baidu
-- ✅ **Ads** — Google AdSense and custom ad slots
 
 ### 🎪 Visual Effects
 - ✅ **Typing effects** — activate_power_mode animations
@@ -182,11 +151,9 @@ Before upgrading, back up your config. After upgrading, check [Releases](https:/
 - ✅ **PWA** — Progressive Web App support
 - ✅ **Copy protection** — Disable copying or append a copyright notice
 - ✅ **Theme customization** — Custom color schemes
-- ✅ **Charts** — Mermaid flowcharts and Chart.js charts
+- ✅ **Charts** — ECharts, Mermaid and Chart.js
 - ✅ **Music notation** — ABCJS support
 - ✅ **Post series** — Group posts into series
-- ✅ **instant.page** — Preload pages for faster navigation
-- ✅ **Snackbar** — Elegant toast notifications
 
 ## 🤝 Contributors
 
@@ -258,3 +225,18 @@ Thanks to everyone who has contributed to Butterfly — your support keeps the t
 
 **✨ If you find this theme useful, please give it a ⭐ star! ✨**
 </div>
+
+## Fork configuration and tests
+
+`navigation` controls page changes, caching and preloading. `visitor_counter` controls visit counts. Component options live in their respective config sections; KaTeX build options live in the site's `markdown.katex`.
+
+Use `DOMContentLoaded` for initial setup, `theme:page-load` after navigation and `theme:page-leave` before replacement. `btf.addPageFn` registers page-scoped callbacks; `pageCleanup` releases component resources.
+
+Run these commands in the theme directory. Integration tests use web-v3's renderer and encryption plugin and clean up their temporary posts.
+
+```sh
+npm install --no-package-lock
+npm test
+npx playwright install chromium
+TEST_MATHJAX=1 npm run test:integration -- /path/to/web-v3
+```

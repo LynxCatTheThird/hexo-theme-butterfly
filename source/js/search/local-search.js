@@ -1,3 +1,4 @@
+// Modified in this fork.
 /**
  * Refer to hexo-generator-searchdb
  * https://github.com/next-theme/hexo-generator-searchdb/blob/main/dist/search.js
@@ -97,15 +98,20 @@ class LocalSearch {
   }
 
   // Highlight title and content
-  highlightKeyword (val, slice) {
+  escapeHtml (text) {
+    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  }
+
+  highlightKeyword (val, slice, escape = false) {
+    const format = text => escape ? this.escapeHtml(text) : text
     const parts = []
     let index = slice.start
     for (const { position, length } of slice.hits) {
-      parts.push(val.substring(index, position))
+      parts.push(format(val.substring(index, position)))
       index = position + length
-      parts.push(`<mark class="search-keyword">${val.substring(position, position + length)}</mark>`)
+      parts.push(`<mark class="search-keyword">${format(val.substring(position, position + length))}</mark>`)
     }
-    parts.push(val.substring(index, slice.end))
+    parts.push(format(val.substring(index, slice.end)))
     return parts.join('')
   }
 
@@ -158,12 +164,13 @@ class LocalSearch {
       let resultItem = ''
 
       url = new URL(url, location.origin)
+      if (!['http:', 'https:'].includes(url.protocol)) return
       url.searchParams.append('highlight', highlightParam)
 
       if (slicesOfTitle.length !== 0) {
-        resultItem += `<li class="local-search-hit-item"><a href="${url.href}"><span class="search-result-title">${this.highlightKeyword(title, slicesOfTitle[0])}</span>`
+        resultItem += `<li class="local-search-hit-item"><a href="${this.escapeHtml(url.href)}"><span class="search-result-title">${this.highlightKeyword(title, slicesOfTitle[0], true)}</span>`
       } else {
-        resultItem += `<li class="local-search-hit-item"><a href="${url.href}"><span class="search-result-title">${title}</span>`
+        resultItem += `<li class="local-search-hit-item"><a href="${this.escapeHtml(url.href)}"><span class="search-result-title">${this.escapeHtml(title)}</span>`
       }
 
       slicesOfContent.forEach(slice => {
@@ -331,7 +338,6 @@ window.addEventListener('load', () => {
     const hasResults = resultItems.length > 0
     toggleResultsVisibility(hasResults)
 
-    window.pjax && window.pjax.refresh($results)
   }
 
   // Render pagination
@@ -519,7 +525,7 @@ window.addEventListener('load', () => {
   }
 
   const searchClickFn = () => {
-    btf.addEventListenerPjax(document.querySelector('#search-button > .search'), 'click', openSearch)
+    btf.addPageEventListener(document.querySelector('#search-button > .search'), 'click', openSearch)
   }
 
   const searchFnOnce = () => {
@@ -558,8 +564,7 @@ window.addEventListener('load', () => {
   searchClickFn()
   searchFnOnce()
 
-  // pjax
-  window.addEventListener('pjax:complete', () => {
+  window.addEventListener('theme:page-load', () => {
     !btf.isHidden($searchMask) && closeSearch()
     localSearch.highlightSearchWords(document.getElementById('article-container'))
     searchClickFn()

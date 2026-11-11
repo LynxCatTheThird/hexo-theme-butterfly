@@ -1,3 +1,4 @@
+//- Modified in this fork.
 - const { server, site } = theme.artalk
 
 script.
@@ -27,5 +28,5 @@ script.
       }
     }
 
-    window.pjax ? getArtalkCount() : window.addEventListener('load', getArtalkCount)
+    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', getArtalkCount, { once: true }) : getArtalkCount()
   })()

@@ -1,7 +1,8 @@
+// Modified in this fork.
 'use strict'
 
 hexo.extend.helper.register('inject_head_js', function () {
-  const { darkmode, aside, pjax } = this.theme
+  const { darkmode, aside, navigation } = this.theme
   const start = darkmode.start || 6
   const end = darkmode.end || 18
   const { theme_color: themeColor } = hexo.theme.config
@@ -62,7 +63,11 @@ hexo.extend.helper.register('inject_head_js', function () {
           }
 
           script.onload = resolve
-          script.onerror = reject
+          script.onerror = () => {
+            scriptCache.delete(url)
+            script.remove()
+            reject(new Error('Failed to load script: ' + url))
+          }
 
           document.head.appendChild(script)
         })
@@ -87,7 +92,11 @@ hexo.extend.helper.register('inject_head_js', function () {
           }
 
           link.onload = resolve
-          link.onerror = reject
+          link.onerror = () => {
+            cssCache.delete(url)
+            link.remove()
+            reject(new Error('Failed to load stylesheet: ' + url))
+          }
 
           document.head.appendChild(link)
         })
@@ -96,8 +105,15 @@ hexo.extend.helper.register('inject_head_js', function () {
 
         return promise
       },
+      // Named callbacks are removed when the current page is replaced.
+      addPageFn: (key, fn, name) => {
+        btf.addGlobalFn(key, fn, name)
+        btf.addGlobalFn('pageCleanup', () => {
+          delete (window.globalFn[key] || {})[name]
+        }, key + ':' + name)
+      },
       addGlobalFn: (key, fn, name = false, parent = window) => {
-        if (!${pjax.enable} && key.startsWith('pjax')) return
+        if (!${navigation.enable} && ['pageLoad', 'pageCleanup', 'navigationStart'].includes(key)) return
         const globalFn = parent.globalFn || {}
         globalFn[key] = globalFn[key] || {}
         globalFn[key][name || Object.keys(globalFn[key]).length] = fn
@@ -200,7 +216,7 @@ hexo.extend.helper.register('inject_head_js', function () {
     detectApple()
   `
 
-  return `<script>
+  return `<script data-swup-theme>
     (() => {
       ${createCustomJs()}
       ${createDarkmodeJs()}

@@ -1,3 +1,4 @@
+// Modified in this fork.
 document.addEventListener('DOMContentLoaded', () => {
   let headerContentWidth, $nav
   let mobileSidebarOpen = false
@@ -54,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const $scrollDownEle = document.getElementById('scroll-down')
-    $scrollDownEle && btf.addEventListenerPjax($scrollDownEle, 'click', handleScrollToDest)
+    $scrollDownEle && btf.addPageEventListener($scrollDownEle, 'click', handleScrollToDest)
   }
 
   /**
@@ -83,50 +84,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const highlightFullpageEle = highlightFullpage ? '<i class="fa-solid fa-up-right-and-down-left-from-center fullpage-button"></i>' : ''
 
     const alertInfo = (ele, text) => {
-      if (GLOBAL_CONFIG.Snackbar !== undefined) {
-        btf.snackbarShow(text)
-      } else {
-        const newEle = document.createElement('div')
-        newEle.className = 'copy-notice'
-        newEle.textContent = text
-        document.body.appendChild(newEle)
+      const newEle = document.createElement('div')
+      newEle.className = 'copy-notice'
+      newEle.textContent = text
+      document.body.appendChild(newEle)
 
-        const buttonRect = ele.getBoundingClientRect()
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-        const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
+      const buttonRect = ele.getBoundingClientRect()
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
 
-        // X-axis boundary check
-        const halfWidth = newEle.offsetWidth / 2
-        const centerLeft = buttonRect.left + scrollLeft + buttonRect.width / 2
-        const finalLeft = Math.max(halfWidth + 10, Math.min(window.innerWidth - halfWidth - 10, centerLeft))
+      // X-axis boundary check
+      const halfWidth = newEle.offsetWidth / 2
+      const centerLeft = buttonRect.left + scrollLeft + buttonRect.width / 2
+      const finalLeft = Math.max(halfWidth + 10, Math.min(window.innerWidth - halfWidth - 10, centerLeft))
 
-        // Show tooltip below button if too close to top
-        const normalTop = buttonRect.top + scrollTop - 40
-        const shouldShowBelow = buttonRect.top < 60 || normalTop < 10
+      // Show tooltip below button if too close to top
+      const normalTop = buttonRect.top + scrollTop - 40
+      const shouldShowBelow = buttonRect.top < 60 || normalTop < 10
 
-        const topValue = shouldShowBelow ? buttonRect.top + scrollTop + buttonRect.height + 10 : normalTop
+      const topValue = shouldShowBelow ? buttonRect.top + scrollTop + buttonRect.height + 10 : normalTop
 
-        newEle.style.cssText = `
-      top: ${topValue + 10}px;
-      left: ${finalLeft}px;
-      transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.3s ease, top 0.3s ease;
-    `
+      newEle.style.cssText = `
+    top: ${topValue + 10}px;
+    left: ${finalLeft}px;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease, top 0.3s ease;
+  `
 
-        requestAnimationFrame(() => {
-          newEle.style.opacity = '1'
-          newEle.style.top = `${topValue}px`
-        })
+      requestAnimationFrame(() => {
+        newEle.style.opacity = '1'
+        newEle.style.top = `${topValue}px`
+      })
 
+      setTimeout(() => {
+        newEle.style.opacity = '0'
+        newEle.style.top = `${topValue + 10}px`
         setTimeout(() => {
-          newEle.style.opacity = '0'
-          newEle.style.top = `${topValue + 10}px`
-          setTimeout(() => {
-            newEle?.remove()
-          }, 300)
-        }, 800)
-      }
+          newEle?.remove()
+        }, 300)
+      }, 800)
     }
 
     const copy = async (text, ctx) => {
@@ -201,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hlTools = document.createElement('div')
         hlTools.className = `highlight-tools ${highlightShrinkClass}`
         hlTools.innerHTML = highlightMacStyleEle + highlightShrinkEle + lang + highlightCopyEle + highlightFullpageEle
-        btf.addEventListenerPjax(hlTools, 'click', highlightToolsFn)
+        btf.addPageEventListener(hlTools, 'click', highlightToolsFn)
         fragment.appendChild(hlTools)
       }
 
@@ -209,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const ele = document.createElement('div')
         ele.className = 'code-expand-btn'
         ele.innerHTML = '<i class="fas fa-angle-double-down"></i>'
-        btf.addEventListenerPjax(ele, 'click', expandCode)
+        btf.addPageEventListener(ele, 'click', expandCode)
         fragment.appendChild(ele)
       }
 
@@ -390,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btf.setLoading.remove(container)
     }
 
-    btf.addGlobalFn('pjaxSendOnce', () => ig.destroy())
+    btf.addGlobalFn('pageCleanup', () => ig.destroy())
   }
 
   const addJustifiedGallery = async (elements, tabs = false) => {
@@ -451,7 +448,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const $rightside = document.getElementById('rightside')
     let initTop = 0
     const $header = document.getElementById('page-header')
-    const isChatBtn = typeof window.chatBtn !== 'undefined'
     const isShowPercent = GLOBAL_CONFIG.percent.rightside
 
     // 檢查文檔高度是否小於視窗高度
@@ -485,13 +481,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isDown) {
           if (flag !== 'down') {
             $header.classList.remove('nav-visible')
-            isChatBtn && window.chatBtn.hide()
             flag = 'down'
           }
         } else {
           if (flag !== 'up') {
             $header.classList.add('nav-visible')
-            isChatBtn && window.chatBtn.show()
             flag = 'up'
           }
         }
@@ -507,7 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     checkDocumentHeight()
-    btf.addEventListenerPjax(window, 'scroll', scrollTask, { passive: true })
+    btf.addPageEventListener(window, 'scroll', scrollTask, { passive: true })
   }
 
   /**
@@ -539,7 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      btf.addEventListenerPjax($cardToc, 'click', tocItemClickFn)
+      btf.addPageEventListener($cardToc, 'click', tocItemClickFn)
 
       autoScrollToc = item => {
         const sidebarHeight = $cardToc.clientHeight
@@ -633,9 +627,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
 
-    btf.addEventListenerPjax(window, 'scroll', scrollHandler, { passive: true })
+    btf.addPageEventListener(window, 'scroll', scrollHandler, { passive: true })
 
-    btf.addGlobalFn('pjaxSendOnce', () => {
+    btf.addGlobalFn('pageCleanup', () => {
       observer.disconnect()
     })
   }
@@ -649,11 +643,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const fn = themeChange[key]
       if (typeof fn !== 'function') return
 
-      if (['disqus', 'disqusjs'].includes(key)) {
-        setTimeout(() => fn(mode), 300)
-      } else {
-        fn(mode)
-      }
+      fn(mode)
     })
   }
 
@@ -678,16 +668,14 @@ document.addEventListener('DOMContentLoaded', () => {
       newEle.innerHTML = '<i class="fas fa-sign-out-alt"></i>'
       newEle.addEventListener('click', exitReadMode)
       $body.appendChild(newEle)
-      btf.addGlobalFn('pjaxSendOnce', exitReadMode, 'exitReadMode')
+      btf.addGlobalFn('pageCleanup', exitReadMode, 'exitReadMode')
     },
     darkmode: () => { // switch between light and dark mode
       const willChangeMode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'
       if (willChangeMode === 'dark') {
         btf.activateDarkMode()
-        GLOBAL_CONFIG.Snackbar !== undefined && btf.snackbarShow(GLOBAL_CONFIG.Snackbar.day_to_night)
       } else {
         btf.activateLightMode()
-        GLOBAL_CONFIG.Snackbar !== undefined && btf.snackbarShow(GLOBAL_CONFIG.Snackbar.night_to_day)
       }
       btf.saveToLocal.set('theme', willChangeMode, 2)
       handleThemeChange(willChangeMode)
@@ -729,12 +717,6 @@ document.addEventListener('DOMContentLoaded', () => {
         tocEle.style.cssText = ''
       }, { once: true })
     },
-    'chat-btn': () => { // Show chat
-      window.chatBtnFn()
-    },
-    translateLink: () => { // switch between traditional and simplified chinese
-      window.translateFn.translatePage()
-    }
   }
 
   document.getElementById('rightside').addEventListener('click', e => {
@@ -765,7 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const openMobileMenu = () => {
     const toggleMenu = document.getElementById('toggle-menu')
     if (!toggleMenu) return
-    btf.addEventListenerPjax(toggleMenu, 'click', () => { sidebarFn.open() })
+    btf.addPageEventListener(toggleMenu, 'click', () => { sidebarFn.open() })
   }
 
   /**
@@ -838,7 +820,7 @@ document.addEventListener('DOMContentLoaded', () => {
       addJustifiedGallery(button.nextElementSibling.querySelectorAll('.gallery-container'))
     }
 
-    btf.addEventListenerPjax($article, 'click', handleClickOfTagHide)
+    btf.addPageEventListener($article, 'click', handleClickOfTagHide)
   }
 
   const tabsFn = $article => {
@@ -874,7 +856,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    btf.addEventListenerPjax($article, 'click', handleClick)
+    btf.addPageEventListener($article, 'click', handleClick)
   }
 
   const toggleCardCategory = () => {
@@ -888,7 +870,7 @@ document.addEventListener('DOMContentLoaded', () => {
         target.parentNode.classList.toggle('expand')
       }
     }
-    btf.addEventListenerPjax(cardCategory, 'click', handleToggleBtn, true)
+    btf.addPageEventListener(cardCategory, 'click', handleToggleBtn, true)
   }
 
   const addPostOutdateNotice = () => {
@@ -910,7 +892,7 @@ document.addEventListener('DOMContentLoaded', () => {
       data_src: 'lazy-src'
     })
 
-    btf.addGlobalFn('pjaxComplete', () => {
+    btf.addGlobalFn('pageLoad', () => {
       window.lazyLoadInstance.update()
     }, 'lazyload')
   }
@@ -933,7 +915,7 @@ document.addEventListener('DOMContentLoaded', () => {
         useResizeObserver: true
       })
       masonryItem.renderItems()
-      btf.addGlobalFn('pjaxCompleteOnce', () => { masonryItem.destroy() }, 'removeJustifiedIndexPostUI')
+      btf.addGlobalFn('pageCleanup', () => { masonryItem.destroy() }, 'removeJustifiedIndexPostUI')
     }
 
     typeof InfiniteGrid === 'function' ? init() : btf.getScript(`${GLOBAL_CONFIG.infinitegrid.js}`).then(init)
@@ -1005,17 +987,13 @@ document.addEventListener('DOMContentLoaded', () => {
     openMobileMenu()
   }
 
-  btf.addGlobalFn('pjaxComplete', refreshFn, 'refreshFn')
+  btf.addGlobalFn('pageLoad', refreshFn, 'refreshFn')
   refreshFn()
   unRefreshFn()
 
   // 處理 hexo-blog-encrypt 事件
   window.addEventListener('hexo-blog-decrypt', e => {
     forPostFn()
-    if (window.translateFn && typeof window.translateFn.translateInitialization === 'function') {
-      window.translateFn.translateInitialization()
-    }
-
     const encryptFn = window.globalFn && window.globalFn.encrypt ? window.globalFn.encrypt : {}
     Object.values(encryptFn).forEach(fn => {
       fn()

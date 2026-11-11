@@ -1,7 +1,7 @@
-- const bsz = theme.busuanzi || {}
-- const bszId = (key, fallback) => (bsz.element_id && bsz.element_id[key]) || fallback
-- const bszClass = key => (bsz.element_class && bsz.element_class[key]) || ''
-
+//- Modified in this fork.
+- const counter = theme.visitor_counter || {}
+- const counterId = (key, fallback) => (counter.element_id && counter.element_id[key]) || fallback
+- const counterClass = key => (counter.element_class && counter.element_class[key]) || ''
 if theme.aside.card_webinfo.enable
   .card-widget.card-webinfo
     .item-headline
@@ -21,25 +21,15 @@ if theme.aside.card_webinfo.enable
         .webinfo-item
           .item-name= `${_p('aside.card_webinfo.site_wordcount')} :`
           .item-count= totalcount(site)
-      if theme.umami_analytics.enable && theme.umami_analytics.UV_PV.site_uv
+      if counter.site_uv
         .webinfo-item
           .item-name= `${_p('aside.card_webinfo.site_uv_name')} :`
-          .item-count#umami-site-uv
+          .item-count(id=counterId('site_uv', 'vercount_value_site_uv') class=counterClass('site_uv'))
             i.fa-solid.fa-spinner.fa-spin
-      else if theme.busuanzi.site_uv
-        .webinfo-item
-          .item-name= `${_p('aside.card_webinfo.site_uv_name')} :`
-          .item-count(id=bszId('site_uv', 'busuanzi_value_site_uv') class=bszClass('site_uv'))
-            i.fa-solid.fa-spinner.fa-spin
-      if theme.umami_analytics.enable && theme.umami_analytics.UV_PV.site_pv
+      if counter.site_pv
         .webinfo-item
           .item-name= `${_p('aside.card_webinfo.site_pv_name')} :`
-          .item-count#umami-site-pv
-            i.fa-solid.fa-spinner.fa-spin
-      else if theme.busuanzi.site_pv
-        .webinfo-item
-          .item-name= `${_p('aside.card_webinfo.site_pv_name')} :`
-          .item-count(id=bszId('site_pv', 'busuanzi_value_site_pv') class=bszClass('site_pv'))
+          .item-count(id=counterId('site_pv', 'vercount_value_site_pv') class=counterClass('site_pv'))
             i.fa-solid.fa-spinner.fa-spin
       if theme.aside.card_webinfo.last_push_date
         .webinfo-item

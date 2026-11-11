@@ -1,3 +1,4 @@
+# Modified in this fork.
 footer:
   framework: 框架
   theme: 主題
@@ -92,18 +93,15 @@ date_suffix:
   month: 個月前
 
 donate: 贊助
-share: 分享
 
 rightside:
   readmode_title: 閱讀模式
-  translate_title: 繁簡轉換
   night_mode_title: 日夜模式切換
   back_to_top: 回到頂端
   toc: 目錄
   scroll_to_comment: 前往評論
   setting: 設定
   aside: 單欄和雙欄切換
-  chat: 聊天
 
 copy_copyright:
   author: 作者
@@ -111,11 +109,7 @@ copy_copyright:
   source: 來源
   info: 著作權歸作者所有。如需商業轉載，請聯絡作者獲得授權，非商業轉載請註明出處。
 
-Snackbar:
-  chs_to_cht: 已切換為繁體中文
-  cht_to_chs: 已切換為簡體中文
-  day_to_night: 已切換為深色模式
-  night_to_day: 已切換為淺色模式
+chart_retry: 重新載入圖表
 
 loading: 載入中...
 load_more: 載入更多

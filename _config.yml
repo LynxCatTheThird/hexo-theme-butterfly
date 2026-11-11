@@ -1,3 +1,4 @@
+# Modified in this fork.
 # --------------------------------------
 # Hexo Butterfly Theme Configuration
 # If you have any questions, please refer to the documentation
@@ -361,20 +362,6 @@ aside:
 # The distance between the bottom right button and the bottom (default unit: px)
 rightside_bottom:
 
-# Conversion between Traditional and Simplified Chinese
-translate:
-  enable: false
-  # The text of a button
-  default: 繁
-  # the language of website (1 - Traditional Chinese/ 2 - Simplified Chinese）
-  defaultEncoding: 2
-  # Time delay
-  translateDelay: 0
-  # The text of the button when the language is Simplified Chinese
-  msgToTraditionalChinese: '繁'
-  # The text of the button when the language is Traditional Chinese
-  msgToSimplifiedChinese: '簡'
-
 # Read Mode
 readmode: true
 
@@ -395,14 +382,13 @@ darkmode:
 # Show scroll percent in scroll-to-top button
 rightside_scroll_percent: false
 
-# Don't modify the following settings unless you know how they work
-# Choose: readmode,translate,darkmode,hideAside,toc,chat,comment
+# Choose: readmode,darkmode,hideAside,toc,comment
 # Don't repeat the same value
 rightside_item_order:
   enable: false
-  # Default: readmode,translate,darkmode,hideAside
+  # Default: readmode,darkmode,hideAside
   hide:
-  # Default: toc,chat,comment
+  # Default: toc,comment
   show:
 
 # Animation for the bottom right config button
@@ -436,13 +422,14 @@ wordcount:
   # Display the total word count of the website in aside's webinfo
   total_wordcount: true
 
-# Busuanzi count for PV / UV in site
-busuanzi:
+# Visitor counter: Vercount by default. UV = unique visitors, PV = page views.
+visitor_counter:
   site_uv: true
   site_pv: true
   page_pv: true
-  # Some third-party providers look for different element IDs/classes.
-  # Leave blank to keep the default busuanzi IDs (`busuanzi_value_*`).
+  api_url: https://events.vercount.one/api/v2/log
+  timeout: 5000 # ms
+  # Optional custom IDs/classes. Defaults: vercount_value_site_uv/site_pv/page_pv.
   element_id:
     site_uv:
     site_pv:
@@ -471,6 +458,14 @@ math:
     enableMenu: true
     # Choose: all / ams / none, This controls whether equations are numbered and how
     tags: none
+    # MathJax loader, output, TeX, CHTML and document options.
+    loader: {}
+    output: {}
+    tex: {}
+    chtml:
+      scale: 1.1
+    options:
+      lazyMargin: 200px
 
   katex:
     # Enable the copy KaTeX formula
@@ -517,33 +512,14 @@ search:
     option:
 
 # --------------------------------------
-# Share System
-# --------------------------------------
-
-share:
-  # Choose: sharejs / addtoany
-  # Leave it empty if you don't need share
-  use: sharejs
-
-  # Share.js
-  # https://github.com/overtrue/share.js
-  sharejs:
-    sites: facebook,x,wechat,weibo,qq
-
-  # AddToAny
-  # https://www.addtoany.com/
-  addtoany:
-    item: facebook,x,wechat,sina_weibo,facebook_messenger,email,copy_link
-
-# --------------------------------------
 # Comments System
 # --------------------------------------
 
 comments:
   # Up to two comments system, the first will be shown as default
   # Leave it empty if you don't need comments
-  # Choose: Disqus/Disqusjs/Livere/Gitalk/Valine/Waline/Utterances/Facebook Comments/Twikoo/Giscus/Remark42/Artalk
-  # Format of two comments system : Disqus,Waline
+  # Choose: Artalk/Twikoo/Waline
+  # Format of two comments system : Artalk,Waline
   use:
   # Display the comment name next to the button
   text: true
@@ -555,79 +531,14 @@ comments:
   # Display comment count in Home Page
   card_post_count: false
 
-# Disqus
-# https://disqus.com/
-disqus:
-  shortname:
-  # For newest comments widget
-  apikey:
-
-# Alternative Disqus - Render comments with Disqus API
-# https://github.com/SukkaW/DisqusJS
-disqusjs:
-  shortname:
-  apikey:
-  option:
-
-# Livere
-# https://www.livere.com/
-livere:
-  uid:
-
-# Gitalk
-# https://github.com/gitalk/gitalk
-gitalk:
-  client_id:
-  client_secret:
-  repo:
-  owner:
-  admin:
-  option:
-
-# Valine
-# https://valine.js.org
-valine:
-  appId:
-  appKey:
-  avatar: monsterid
-  # This configuration is suitable for domestic custom domain name users, overseas version will be automatically detected (no need to manually fill in)
-  serverURLs:
-  bg:
-  # Use Valine visitor count as the page view count
-  visitor: false
-  option:
-
-# Waline - A simple comment system with backend support fork from Valine
+# Waline
 # https://waline.js.org/
 waline:
   serverURL:
   bg:
-  # Use Waline pageview count as the page view count
+  # Use Waline for the article view count when it is the active comment system.
   pageview: false
   option:
-
-# Utterances
-# https://utteranc.es/
-utterances:
-  repo:
-  # Issue Mapping: pathname/url/title/og:title
-  issue_term: pathname
-  # Theme: github-light/github-dark/github-dark-orange/icy-dark/dark-blue/photon-dark
-  light_theme: github-light
-  dark_theme: photon-dark
-  js:
-  option:
-
-# Facebook Comments Plugin
-# https://developers.facebook.com/docs/plugins/comments/
-facebook_comments:
-  app_id:
-  # optional
-  user_id:
-  pageSize: 10
-  # Choose: social / time / reverse_time
-  order_by: social
-  lang: en_US
 
 # Twikoo
 # https://github.com/imaegoo/twikoo
@@ -638,24 +549,6 @@ twikoo:
   visitor: false
   option:
 
-# Giscus
-# https://giscus.app/
-giscus:
-  repo:
-  repo_id:
-  category_id:
-  light_theme: light
-  dark_theme: dark
-  js:
-  option:
-
-# Remark42
-# https://remark42.com/docs/configuration/frontend/
-remark42:
-  host:
-  siteId:
-  option:
-
 # Artalk
 # https://artalk.js.org/guide/frontend/config.html
 artalk:
@@ -663,97 +556,9 @@ artalk:
   site:
   # Use Artalk visitor count as the page view count
   visitor: false
+  # Page voting; comment voting uses option.vote.
   vote: false
   option:
-
-# --------------------------------------
-# Chat Services
-# --------------------------------------
-
-chat:
-  # Choose: chatra/tidio/crisp/knocket
-  # Leave it empty if you don't need chat
-  use:
-  # Chat Button [recommend]
-  # It will create a button in the bottom right corner of website, and hide the origin button
-  rightside_button: false
-  # The origin chat button is displayed when scrolling up, and the button is hidden when scrolling down
-  button_hide_show: false
-
-# https://chatra.io/
-chatra:
-  id:
-
-# https://www.tidio.com/
-tidio:
-  public_key:
-
-# https://crisp.chat/en/
-crisp:
-  website_id:
-
-# https://trtc.io/solutions/knocket
-knocket:
-  identifier:
-
-# --------------------------------------
-# Analysis
-# --------------------------------------
-
-# https://tongji.baidu.com/web/welcome/login
-baidu_analytics:
-
-# https://analytics.google.com/analytics/web/
-google_analytics:
-
-# https://www.cloudflare.com/zh-tw/web-analytics/
-cloudflare_analytics:
-
-# https://clarity.microsoft.com/
-microsoft_clarity:
-
-# https://umami.is/
-umami_analytics:
-  enable: false
-  # For self-hosted setups, configure the hostname of the Umami instance
-  serverURL:
-  script_name: script.js
-  website_id:
-  option:
-  UV_PV:
-    site_uv: false
-    site_pv: false
-    page_pv: false
-    # Umami Cloud (API key) / self-hosted Umami (token)
-    token:
-
-# https://www.googletagmanager.com/
-google_tag_manager:
-  tag_id:
-  # optional
-  domain:
-
-# --------------------------------------
-# Advertisement
-# --------------------------------------
-
-# Google Adsense
-google_adsense:
-  enable: false
-  auto_ads: true
-  js: https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js
-  client:
-  enable_page_level_ads: true
-
-# Insert ads manually
-# Leave it empty if you don't need ads
-ad:
-  # Insert ads in the index (every three posts)
-  index:
-  # Insert ads in aside
-  aside:
-  # Insert ads in the post (before pagination)
-  post:
 
 # --------------------------------------
 # Verification
@@ -834,7 +639,6 @@ beautify:
   title_prefix_icon_color:
 
 # Global font settings
-# Don't modify the following settings unless you know how they work
 font:
   global_font_size:
   code_font_size:
@@ -886,7 +690,7 @@ canvas_fluttering_ribbon:
 canvas_nest:
   enable: false
   # Color of lines, default: '0,0,0'; RGB values: (R,G,B).(note: use ',' to separate.)
-  color: '0,0,255'
+  color: "0,0,255"
   # The opacity of line (0~1)
   opacity: 0.7
   # The z-index property of the background
@@ -926,6 +730,8 @@ clickShowText:
 # https://fancyapps.com/fancybox/
 # Leave it empty if you don't need lightbox
 lightbox:
+# Options for the selected lightbox.
+lightbox_options: {}
 
 # --------------------------------------
 # Tag Plugins settings
@@ -935,7 +741,7 @@ lightbox:
 series:
   enable: false
   # Order by title or date
-  orderBy: 'title'
+  orderBy: "title"
   # Sort of order. 1, asc for ascending; -1, desc for descending
   order: 1
   number: true
@@ -960,25 +766,40 @@ mermaid:
   open_in_new_tab: true
   # Enable zoom and pan interactions on diagrams
   zoom_pan: true
+  # Global Mermaid options; per-diagram and mode-specific themes take precedence.
+  options: {}
+
+# ECharts JSON code blocks
+echarts:
+  enable: true
+  height: 400 # px
+  init_options:
+    renderer: canvas # canvas / svg; init_options also accepts locale and devicePixelRatio
+  theme:
+    light:
+    dark: dark
+  option:
+    animation: false
 
 # chartjs
 # see https://www.chartjs.org/docs/latest/
 chartjs:
   enable: false
-  # Do not modify unless you understand how they work.
+  # Chart options; individual chart definitions take precedence.
+  options: {}
   # The default settings are only used when the MD syntax is not specified.
   # General font color for the chart
   fontColor:
-    light: 'rgba(0, 0, 0, 0.8)'
-    dark: 'rgba(255, 255, 255, 0.8)'
+    light: "rgba(0, 0, 0, 0.8)"
+    dark: "rgba(255, 255, 255, 0.8)"
   # General border color for the chart
   borderColor:
-    light: 'rgba(0, 0, 0, 0.1)'
-    dark: 'rgba(255, 255, 255, 0.2)'
+    light: "rgba(0, 0, 0, 0.1)"
+    dark: "rgba(255, 255, 255, 0.2)"
   # Background color for scale labels on radar and polar area charts
   scale_ticks_backdropColor:
-    light: 'transparent'
-    dark: 'transparent'
+    light: "transparent"
+    dark: "transparent"
 
 # Note - Bootstrap Callout
 note:
@@ -998,26 +819,14 @@ note:
 # Other Settings
 # --------------------------------------
 
-# https://github.com/MoOx/pjax
-pjax:
+# Swup navigation and preloading.
+navigation:
   enable: false
-  # Exclude the specified pages from pjax, such as '/music/'
+  cache: true # Cache fetched HTML responses.
+  preload: false # Hover, touch and keyboard focus.
+  timeout: 10000 # Page fetch/script timeout in ms
   exclude:
     # - /xxxxxx/
-
-# Snackbar - Toast Notification
-# https://github.com/polonel/SnackBar
-# position: top-left / top-center / top-right / bottom-left / bottom-center / bottom-right
-snackbar:
-  enable: false
-  position: bottom-left
-  # The background color of Toast Notification in light mode and dark mode
-  bg_light: '#49b1f5'
-  bg_dark: '#1f1f1f'
-
-# Instant.page
-# https://instant.page/
-instantpage: false
 
 # Lazyload
 # https://github.com/verlok/vanilla-lazyload
@@ -1074,13 +883,11 @@ inject:
     # - <script src="xxxx"></script>
 
 # CDN Settings
-# Don't modify the following settings unless you know how they work
 CDN:
-  # The CDN provider for internal and third-party scripts
-  # Options for both: local/jsdelivr/unpkg/cdnjs/custom
-  # Note: Dev version can only use 'local' for internal scripts
+  # Internal scripts: local, or a custom CDN serving this fork.
   # Note: When setting third-party scripts to 'local', you need to install hexo-butterfly-extjs
   internal_provider: local
+  # Third-party scripts: local/jsdelivr/unpkg/cdnjs/custom
   third_party_provider: jsdelivr
 
   # Add version number to url, true or false
@@ -1097,16 +904,12 @@ CDN:
     # algolia_search:
     # artalk_css:
     # artalk_js:
-    # blueimp_md5:
-    # busuanzi:
     # canvas_fluttering_ribbon:
     # canvas_nest:
     # canvas_ribbon:
     # chartjs:
     # click_heart:
     # clickShowText:
-    # disqusjs:
-    # disqusjs_css:
     # docsearch_css:
     # docsearch_js:
     # egjs_infinitegrid:
@@ -1114,10 +917,6 @@ CDN:
     # fancybox_css:
     # fireworks:
     # fontawesome:
-    # gitalk:
-    # gitalk_css:
-    # giscus:
-    # instantpage:
     # katex:
     # katex_copytex:
     # lazyload:
@@ -1130,15 +929,8 @@ CDN:
     # prismjs_autoloader:
     # prismjs_js:
     # prismjs_lineNumber_js:
-    # pjax:
-    # sharejs:
-    # sharejs_css:
-    # snackbar:
-    # snackbar_css:
-    # translate:
     # twikoo:
     # typed:
     # utils:
-    # valine:
     # waline_css:
     # waline_js:

@@ -1,0 +1,39 @@
+- const counter = theme.visitor_counter
+- const elements = counter.element_id || {}
+- const ids = {}
+each key in ['site_uv', 'site_pv', 'page_pv']
+  if counter[key]
+    - ids[key] = elements[key] || `vercount_value_${key}`
+script.
+  (async () => {
+    if (!/^https?:$/.test(location.protocol)) return
+    const api = !{JSON.stringify(counter.api_url).replace(/</g, '\\u003c')}
+    const targets = Object.entries(!{JSON.stringify(ids).replace(/</g, '\\u003c')})
+      .map(([key, id]) => [key, document.getElementById(id)])
+    const url = location.href
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), !{counter.timeout})
+    try {
+      // Keep the visitor flag compatible with Vercount's existing client cookie.
+      const cookie = 'vercount_uv_' + location.host.replace(/[^a-zA-Z0-9_-]/g, '_')
+      const isNewUv = !document.cookie.split(';').some(entry => entry.trim() === cookie + '=1')
+      if (isNewUv) document.cookie = cookie + '=1; path=/; max-age=31536000; samesite=lax'
+      const response = await fetch(api, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, isNewUv }),
+        signal: controller.signal
+      })
+      if (!response.ok) throw new Error(`Counter request failed: ${response.status}`)
+      const result = await response.json()
+      if (result.status !== 'success') throw new Error(result.message || 'Counter response failed')
+      for (const [key, el] of targets) {
+        if (el?.isConnected) el.textContent = result.data[key] ?? '—'
+      }
+    } catch (error) {
+      console.warn('[visitor_counter]', error)
+      for (const [, el] of targets) if (el?.isConnected) el.textContent = '—'
+    } finally {
+      clearTimeout(timeout)
+    }
+  })()

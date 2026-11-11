@@ -1,3 +1,4 @@
+//- Modified in this fork.
 #aside-content.aside-content
   //- post
   if globalPageType === 'post'
@@ -16,7 +17,6 @@
         if page.series
           include ./card_post_series.pug
         !=partial('includes/widget/card_recent_post', {}, {cache: true})
-        !=partial('includes/widget/card_ad', {}, {cache: true})
   else
     //- page
     !=partial('includes/widget/card_author', {}, {cache: true})
@@ -27,7 +27,6 @@
       if showToc
         include ./card_post_toc.pug
       !=partial('includes/widget/card_recent_post', {}, {cache: true})
-      !=partial('includes/widget/card_ad', {}, {cache: true})
       !=partial('includes/widget/card_newest_comment', {}, {cache: true})
       !=partial('includes/widget/card_categories', {}, {cache: true})
       !=partial('includes/widget/card_tags', {}, {cache: true})

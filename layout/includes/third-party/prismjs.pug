@@ -1,3 +1,4 @@
+//- Modified in this fork.
 - const { prismjs_js, prismjs_autoloader, prismjs_lineNumber_js } = theme.asset
 - const { prismjs, syntax_highlighter } = config
 - const { enable, preprocess, line_number } = prismjs
@@ -17,7 +18,7 @@ if (syntax_highlighter === 'prismjs' || enable) && !preprocess
       }
 
       window.addEventListener('load', highlightAll)
-      btf.addGlobalFn('pjaxComplete', highlightAll, 'prismjs')
+      btf.addGlobalFn('pageLoad', highlightAll, 'prismjs')
       btf.addGlobalFn('encrypt', highlightAll, 'prismjs')
     })()
 

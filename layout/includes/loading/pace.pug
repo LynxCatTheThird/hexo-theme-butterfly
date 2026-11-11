@@ -1,9 +1,10 @@
+//- Modified in this fork.
 script.
   window.paceOptions = {
     restartOnPushState: false
   }
 
-  btf.addGlobalFn('pjaxSend', () => {
+  btf.addGlobalFn('navigationStart', () => {
     Pace.restart()
   }, 'pace_restart')
 

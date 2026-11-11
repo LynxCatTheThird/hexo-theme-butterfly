@@ -1,3 +1,4 @@
+# Modified in this fork.
 footer:
   framework: 프레임워크
   theme: 테마
@@ -92,18 +93,15 @@ date_suffix:
   month: 달 전
 
 donate: 후원
-share: 공유
 
 rightside:
   readmode_title: 읽기 모드
-  translate_title: 번체와 간체 전환
   night_mode_title: 라이트/다크 모드 전환
   back_to_top: 맨 위로
   toc: 목차
   scroll_to_comment: 댓글로 이동
   setting: 설정
   aside: 단일/이중 열 전환
-  chat: 채팅
 
 copy_copyright:
   author: 작성자
@@ -111,11 +109,7 @@ copy_copyright:
   source: 출처
   info: 저작권은 작성자에게 있습니다. 상업적 사용을 위해서는 작성자의 허가를 받아야 하며, 비상업적 사용 시에는 출처를 명시해 주세요.
 
-Snackbar:
-  chs_to_cht: 번체로 전환되었습니다.
-  cht_to_chs: 간체로 전환되었습니다.
-  day_to_night: 다크 모드로 전환되었습니다.
-  night_to_day: 라이트 모드로 전환되었습니다.
+chart_retry: 차트 다시 불러오기
 
 loading: 로딩 중...
 load_more: 더 보기

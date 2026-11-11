@@ -1,3 +1,4 @@
+//- Modified in this fork.
 //- - author:
 //-   avatar:
 //-   date:
@@ -291,17 +292,16 @@
           }
         }
 
-        const pjaxCleanup = () => {
+        const cleanupComments = () => {
           const container = document.getElementById('article-container')
           if (container) {
             const nav = container.nextElementSibling
             if (nav && nav.classList.contains('shuoshuo-navigation')) nav.remove()
           }
-          document.removeEventListener('pjax:send', pjaxCleanup)
         }
 
-        if (window.pjax) {
-          document.addEventListener('pjax:send', pjaxCleanup)
+        if (window.swup) {
+          document.addEventListener('theme:page-leave', cleanupComments)
           loadShuoshuo()
         } else {
           window.addEventListener('load', loadShuoshuo)

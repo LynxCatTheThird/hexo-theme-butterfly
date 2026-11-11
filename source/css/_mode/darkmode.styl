@@ -1,3 +1,4 @@
+// Modified in this fork.
 if hexo-config('darkmode.enable') || hexo-config('display_mode') == 'dark'
   [data-theme='dark']
     --global-bg: darken(#121212, 2)
@@ -132,7 +133,6 @@ if hexo-config('darkmode.enable') || hexo-config('display_mode') == 'dark'
     .error-img,
     .container iframe,
     .gist,
-    .ads-wrap,
     .tag-cloud-list > a
       filter: brightness(.8)
 
@@ -144,35 +144,6 @@ if hexo-config('darkmode.enable') || hexo-config('display_mode') == 'dark'
 
     #aside-content .aside-list > .aside-list-item:not(:last-child)
       border-bottom: 1px dashed alpha(#FFFFFF, .1)
-
-    // Gitalk
-    #gitalk-container
-      filter: brightness(.8)
-
-      svg
-        fill: alpha(#FFFFFF, .9) !important
-
-    // Disqusjs 反代模式下的適配
-    #disqusjs
-      #dsqjs
-        &:hover,
-        &:focus,
-        .dsqjs-tab-active,
-        .dsqjs-no-comment
-          color: alpha(#FFFFFF, .7)
-
-        .dsqjs-order-label
-          background-color: lighten(#121212, 5)
-
-        .dsqjs-post-body
-          color: alpha(#FFFFFF, .7)
-
-          code,
-          pre
-            background: #2c2c2c
-
-          blockquote
-            color: alpha(#FFFFFF, .7)
 
     #artitalk_main #lazy
       background: #121212

@@ -1,3 +1,4 @@
+//- Modified in this fork.
 extends includes/layout.pug
 
 block content
@@ -16,14 +17,9 @@ block content
         .post-meta__tag-list
           each item, index in page.tags.data
             a(href=url_for(item.path)).post-meta__tags #[=item.name]
-      include includes/third-party/share/index.pug
 
     if theme.reward.enable && theme.reward.QR_code
       !=partial('includes/post/reward', {}, {cache: true})
-
-    //- ad
-    if theme.ad && theme.ad.post
-      .ads-wrap!=theme.ad.post
 
     if theme.post_pagination
       include includes/pagination.pug

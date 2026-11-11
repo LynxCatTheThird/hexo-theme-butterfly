@@ -1,5 +1,5 @@
+//- Modified in this fork.
 -
-  const titleVal = pageTitle.replace(/'/ig,"\\'")
 
   let isHighlightShrink
   if (theme.code_blocks.shrink == 'none') isHighlightShrink = 'undefined'
@@ -16,9 +16,9 @@
   }
 -
 
-script#config-diff.
+script#config-diff(data-swup-theme).
   var GLOBAL_CONFIG_SITE = {
-    title: '!{titleVal}',
+    title: !{JSON.stringify(pageTitle).replace(/</g, '\\u003c')},
     isHighlightShrink: !{isHighlightShrink},
     isToc: !{showToc},
     pageType: '!{page.type == 'shuoshuo' ? 'shuoshuo' : globalPageType}'

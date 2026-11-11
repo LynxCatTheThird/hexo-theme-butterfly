@@ -1,3 +1,4 @@
+//- Modified in this fork.
 script.
   (() => {
     const getCommentUrl = () => {
@@ -34,6 +35,6 @@ script.
         }
     }
 
-    window.pjax ? getCount() : window.addEventListener('load', getCount)
+    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', getCount, { once: true }) : getCount()
 
   })()

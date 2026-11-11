@@ -4,7 +4,9 @@
   "description": "A Simple and Card UI Design theme for Hexo",
   "main": "package.json",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test test/*.test.cjs",
+    "test:browser": "node test/browser.cjs",
+    "test:integration": "node test/integration.cjs"
   },
   "keywords": [
     "hexo",
@@ -16,11 +18,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/jerryc127/hexo-theme-butterfly.git"
+    "url": "https://github.com/LynxCatTheThird/hexo-theme-butterfly.git"
   },
   "bugs": {
-    "url": "https://github.com/jerryc127/hexo-theme-butterfly/issues",
-    "email": "my@crazywong.com"
+    "url": "https://github.com/LynxCatTheThird/hexo-theme-butterfly/issues"
   },
   "dependencies": {
     "hexo-renderer-pug": "^3.0.0",
@@ -30,5 +31,8 @@
   },
   "homepage": "https://butterfly.js.org/",
   "author": "Jerry <my@crazywong.com>",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
 }

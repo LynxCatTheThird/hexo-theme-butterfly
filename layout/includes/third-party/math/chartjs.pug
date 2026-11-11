@@ -1,3 +1,4 @@
+//- Modified in this fork.
 - const { fontColor, borderColor, scale_ticks_backdropColor } = theme.chartjs
 
 script.
@@ -38,9 +39,8 @@ script.
     }
 
     const runChartJS = ele => {
-      window.loadChartJS = true
-
       Array.from(ele).forEach((item, index) => {
+        if (!item.isConnected) return
         const chartSrc = item.firstElementChild
         const chartID = item.getAttribute('data-chartjs-id') || ('chartjs-' + index) // Use custom ID or default ID
         const width = item.getAttribute('data-width')
@@ -69,6 +69,7 @@ script.
         const ctx = document.getElementById(chartID).getContext('2d')
 
         const config = JSON.parse(chartDefinition)
+        config.options = { ...!{JSON.stringify(theme.chartjs.options || {}).replace(/</g, '\\u003c')}, ...config.options }
 
         const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark-mode' : 'light-mode'
 
@@ -86,17 +87,17 @@ script.
       const chartJSEle = document.querySelectorAll('#article-container .chartjs-container')
       if (chartJSEle.length === 0) return
 
-      window.loadChartJS ? runChartJS(chartJSEle) : btf.getScript('!{url_for(theme.asset.chartjs)}').then(() => runChartJS(chartJSEle))
+      typeof window.Chart === 'function' ? runChartJS(chartJSEle) : btf.getScript('!{url_for(theme.asset.chartjs)}').then(() => runChartJS(chartJSEle))
     }
 
     // Destroy all charts before navigating away to avoid leaks
-    btf.addGlobalFn('pjaxSendOnce', () => {
+    btf.addGlobalFn('pageCleanup', () => {
       document.querySelectorAll('.chartjs-wrap canvas').forEach(destroyChart)
     }, 'chartjs')
 
     // Listen for theme change events
-    btf.addGlobalFn('themeChange', loadChartJS, 'chartjs')
-    btf.addGlobalFn('encrypt', loadChartJS, 'chartjs')
+    btf.addPageFn('themeChange', loadChartJS, 'chartjs')
+    btf.addPageFn('encrypt', loadChartJS, 'chartjs')
 
-    window.pjax ? loadChartJS() : document.addEventListener('DOMContentLoaded', loadChartJS)
+    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', loadChartJS, { once: true }) : loadChartJS()
   })()

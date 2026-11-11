@@ -1,3 +1,4 @@
+//- Modified in this fork.
 script.
   (() => {
     const parseViewBox = viewBox => {
@@ -278,9 +279,14 @@ script.
     }
 
     const runMermaid = ele => {
-      window.loadMermaid = true
+      if (window.mermaidInitialized !== true) {
+        mermaid.initialize({ ...!{JSON.stringify(theme.mermaid.options || {}).replace(/</g, '\\u003c')}, startOnLoad: false })
+        window.mermaidInitialized = true
+      }
       const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '!{theme.mermaid.theme.dark}' : '!{theme.mermaid.theme.light}'
       ele.forEach((item, index) => {
+        if (!item.isConnected) return
+        const renderId = item.__mermaidRenderId = (item.__mermaidRenderId || 0) + 1
         const mermaidSrc = item.firstElementChild
         // Clean up event listeners and stale content before re-rendering
         if (item.__mermaidAbortController) {
@@ -304,6 +310,7 @@ script.
         const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
 
         const renderMermaid = svg => {
+          if (!item.isConnected || item.__mermaidRenderId !== renderId) return
           mermaidSrc.insertAdjacentHTML('afterend', svg)
           if (!{theme.mermaid.zoom_pan}) initMermaidGestures(item)
           item.__mermaidOriginalSvg = svg
@@ -311,6 +318,7 @@ script.
         }
 
         const handleError = err => {
+          if (!item.isConnected || item.__mermaidRenderId !== renderId) return
           console.error(`[mermaid] render failed for block #${index}:`, err)
           const errorEl = document.createElement('div')
           errorEl.className = 'mermaid-error'
@@ -357,10 +365,13 @@ script.
       if ($mermaid.length === 0) return
 
       const runMermaidFn = () => runMermaid($mermaid)
-      btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
-      window.loadMermaid ? runMermaidFn() : btf.getScript('!{url_for(theme.asset.mermaid)}').then(runMermaidFn)
+      btf.addPageFn('themeChange', runMermaidFn, 'mermaid')
+      typeof window.mermaid?.render === 'function' ? runMermaidFn() : btf.getScript('!{url_for(theme.asset.mermaid)}').then(runMermaidFn)
     }
 
-    btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
-    window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+    btf.addGlobalFn('pageCleanup', () => {
+      document.querySelectorAll('.mermaid-wrap').forEach(item => item.__mermaidAbortController?.abort())
+    }, 'mermaid')
+    btf.addPageFn('encrypt', loadMermaid, 'mermaid')
+    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', loadMermaid, { once: true }) : loadMermaid()
   })()

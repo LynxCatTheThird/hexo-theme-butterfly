@@ -1,3 +1,4 @@
+//- Modified in this fork.
 - var globalPageType = getPageType(page, is_home)
 - var htmlClassHideAside = theme.aside.enable && theme.aside.hide ? 'hide-aside' : ''
 - page.aside = globalPageType === 'archive' ? theme.aside.display.archive: globalPageType === 'category' ? theme.aside.display.category : globalPageType === 'tag' ? theme.aside.display.tag : page.aside
@@ -28,12 +29,12 @@ html(lang=config.language data-theme=theme.display_mode class=htmlClassHideAside
               requestAnimationFrame(() => webBgDiv.classList.add('bg-animation'))
             }
 
-            document.addEventListener('pjax:send', () => {
+            document.addEventListener('theme:page-leave', () => {
               webBgDiv.style = ''
               webBgDiv.classList.remove('bg-animation')
             })
 
-            document.addEventListener('pjax:complete', setRandomBg)
+            document.addEventListener('theme:page-load', setRandomBg)
             document.addEventListener('DOMContentLoaded', setRandomBg)
           })()
 

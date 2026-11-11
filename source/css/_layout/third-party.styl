@@ -1,25 +1,4 @@
-#vcomment
-  font-size: 1.1em
-
-  .vbtn
-    border: none
-    background: var(--btn-bg)
-    color: var(--btn-color)
-
-    &:hover
-      background: var(--btn-hover-color)
-
-  .vimg
-    transition: all .3s
-
-    &:hover
-      transform: rotate(360deg)
-
-  .vcards .vcard .vcontent.expand
-    &:before,
-    &:after
-      z-index: 22
-
+// Modified in this fork.
 #waline-wrap
   --waline-font-size: 1.1em
   --waline-theme-color: $button-bg
@@ -129,14 +108,6 @@ if hexo-config('artalk.vote')
       opacity: 0
       transform: translate(-50%, -50%) scale(20)
 
-if hexo-config('valine.bg')
-  #vcomment
-    textarea
-      background: url(hexo-config('valine.bg')) 100% 100% no-repeat
-
-      &:focus
-        background-image: none
-
 if hexo-config('waline.bg')
   #waline-wrap
     textarea
@@ -245,15 +216,6 @@ if hexo-config('chartjs.enable')
     canvas
       display: inline-block !important
 
-.utterances,
-.fb-comments iframe
-  width: 100% !important
-
-#gitalk-container
-  .gt-meta
-    margin: 0 0 .8em
-    padding: 6px 0 16px
-
 if hexo-config('math.use')
   .katex-display
     overflow: auto hidden
@@ -293,10 +255,6 @@ if hexo-config('math.use')
   mjx-assistive-mml
     right: 0
     bottom: 0
-
-.snackbar-container.snackbar-css
-  addBorderRadius(5)
-  opacity: .85 !important
 
 .abc-music-sheet
   margin: 0 0 20px

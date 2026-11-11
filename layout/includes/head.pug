@@ -1,3 +1,4 @@
+//- Modified in this fork.
 - var pageTitle
 - globalPageType === 'archive' ? page.title = findArchivesTitle(page, theme.menu, date) : ''
 case globalPageType
@@ -26,7 +27,7 @@ title= tabTitle
 meta(name="author" content=pageAuthor)
 meta(name="copyright" content=pageCopyright)
 meta(name ="format-detection" content="telephone=no")
-meta(name="theme-color" content=themeColor)
+meta(data-swup-theme name="theme-color" content=themeColor)
 
 //- Open_Graph
 include ./head/Open_Graph.pug
@@ -48,26 +49,17 @@ if (theme.pwa && theme.pwa.enable)
   !=partial('includes/head/pwa', {}, {cache: true})
 
 //- main css
-link(rel='stylesheet', href=url_for(theme.asset.main_css))
-link(rel='stylesheet', href=url_for(theme.asset.fontawesome))
-
-if (theme.snackbar && theme.snackbar.enable)
-  link(rel='stylesheet', href=url_for(theme.asset.snackbar_css) media="print" onload="this.media='all'")
+link(data-swup-theme rel='stylesheet', href=url_for(theme.asset.main_css))
+link(data-swup-theme rel='stylesheet', href=url_for(theme.asset.fontawesome))
 
 if theme.lightbox === 'fancybox'
-  link(rel='stylesheet' href=url_for(theme.asset.fancybox_css) media="print" onload="this.media='all'")
+  link(data-swup-theme rel='stylesheet' href=url_for(theme.asset.fancybox_css) media="print" onload="this.media='all'")
 
 !=fragment_cache('injectHeadJs', function(){return inject_head_js()})
 
-//- google_adsense
-!=partial('includes/head/google_adsense', {}, {cache: true})
-
-//- analytics
-!=partial('includes/head/analytics', {}, {cache: true})
-
 //- font
 if theme.blog_title_font && theme.blog_title_font.font_link
-  link(rel='stylesheet' href=url_for(theme.blog_title_font.font_link) media="print" onload="this.media='all'")
+  link(data-swup-theme rel='stylesheet' href=url_for(theme.blog_title_font.font_link) media="print" onload="this.media='all'")
 
 //- global config
 !=partial('includes/head/config', {}, {cache: true})

@@ -1,3 +1,4 @@
+//- Modified in this fork.
 - const serverURL = theme.waline.serverURL.replace(/\/$/, '')
 script.
   (() => {
@@ -17,5 +18,5 @@ script.
       }
     }
 
-    window.pjax ? loadWaline() : window.addEventListener('load', loadWaline)
+    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', loadWaline, { once: true }) : loadWaline()
   })()

@@ -1,3 +1,4 @@
+//- Modified in this fork.
 script.
   window.newestComments = {
     ready: fn => {
@@ -60,7 +61,6 @@ script.
 
       ele.innerHTML = result
       window.lazyLoadInstance && window.lazyLoadInstance.update()
-      window.pjax && window.pjax.refresh(ele)
     },
 
     fetchAndRender: (keyName, ele, getComment) => {
@@ -92,6 +92,6 @@ script.
 
     run: (name, getComment) => {
       newestComments.newestCommentInit(name, getComment)
-      btf.addGlobalFn('pjaxComplete', () => newestComments.newestCommentInit(name, getComment), name)
+      btf.addGlobalFn('pageLoad', () => newestComments.newestCommentInit(name, getComment), name)
     }
   }

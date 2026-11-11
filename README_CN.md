@@ -8,6 +8,8 @@
 
 # hexo-theme-butterfly
 
+本分支修改了導覽與元件整合，配置以本倉庫的 `_config.yml` 為準。
+
 一個現代、美觀且功能豐富的 Hexo 主題
 
 ![master version](https://img.shields.io/github/package-json/v/jerryc127/hexo-theme-butterfly/master?color=%231ab1ad&label=master)
@@ -51,31 +53,11 @@
 
 ### 💾 安裝方式
 
-#### 方式一：Git 安裝（推薦）
-
-> 💡 **提示**：如果您在中國大陸連線 GitHub 較慢，可以使用 [Gitee 鏡像](https://gitee.com/immyw/hexo-theme-butterfly.git)。
-
-在 Hexo 部落格根目錄執行以下指令：
+在 Hexo 根目錄安裝本分支：
 
 ```bash
-# 安裝穩定版本（推薦）
-git clone -b master --depth 1 https://github.com/jerryc127/hexo-theme-butterfly.git themes/butterfly
+git clone -b dev --depth 1 https://github.com/LynxCatTheThird/hexo-theme-butterfly.git themes/butterfly
 ```
-
-```bash
-# 安裝開發版本（搶先體驗新功能）
-git clone -b dev --depth 1 https://github.com/jerryc127/hexo-theme-butterfly.git themes/butterfly
-```
-
-> 📁 如果 `themes/butterfly` 已存在，請先刪除或重新命名，否則目標資料夾不是空的，`git clone` 會失敗。
-
-#### 方式二：npm 安裝
-
-```bash
-npm install hexo-theme-butterfly
-```
-
-> ⚠️ **注意**：npm 安裝不會在 `themes/` 底下建立資料夾，主題會放在 `node_modules/` 中。
 
 ### ⚙️ 啟用與設定
 
@@ -91,11 +73,9 @@ npm install hexo-theme-butterfly
    # Git 安裝
    cp themes/butterfly/_config.yml _config.butterfly.yml
 
-   # npm 安裝
-   cp node_modules/hexo-theme-butterfly/_config.yml _config.butterfly.yml
    ```
 
-   > 💡 Hexo 5+ 會自動讀取根目錄的 `_config.butterfly.yml`。Windows 請使用 `copy themes\butterfly\_config.yml _config.butterfly.yml`（Git 安裝）或 `copy node_modules\hexo-theme-butterfly\_config.yml _config.butterfly.yml`（npm 安裝）。
+   > Hexo 5+ 自動讀取根目錄的 `_config.butterfly.yml`。
    >
    > ⚠️ 之後只需修改 `_config.butterfly.yml`。請勿刪除主題內的 `_config.yml`，也不要將自訂檔案或圖片放進主題的 `source/` 資料夾，升級時可能會被覆蓋。
 
@@ -115,12 +95,6 @@ npm install hexo-theme-butterfly
 ```bash
 cd themes/butterfly
 git pull
-```
-
-**npm 安裝**
-
-```bash
-npm update hexo-theme-butterfly
 ```
 
 升級前請先備份設定。升級後請到 [Releases](https://github.com/jerryc127/hexo-theme-butterfly/releases) 查看 `_config` 的變更，並同步到 `_config.butterfly.yml`。
@@ -145,13 +119,12 @@ npm update hexo-theme-butterfly
 - ✅ **字數統計**：顯示字數與預估閱讀時間
 - ✅ **相關文章**：在文章底部推薦相關內容
 - ✅ **過期提醒**：文章可能過期時提醒讀者
-- ✅ **簡繁轉換**：在繁體與簡體中文之間切換
 - ✅ **標籤外掛**：提供多種實用外掛
 
 ### 🔍 搜尋與導覽
 - ✅ **多種搜尋方式**：Algolia、本機搜尋或 DocSearch
 - ✅ **內建 404 頁面**：美觀的錯誤頁面
-- ✅ **PJAX**：流暢的頁面切換
+- ✅ **Swup**：流暢的頁面切換
 
 ### 🎨 程式碼展示
 - ✅ **語法高亮**：內建多種主題（darker、pale night、light、ocean）
@@ -159,16 +132,12 @@ npm update hexo-theme-butterfly
 - ✅ **數學公式**：支援 MathJax 與 KaTeX
 
 ### 💬 社群互動
-- ✅ **多種留言系統**：Disqus、Gitalk、Valine、Waline、Twikoo、Giscus、Artalk 等
+- ✅ **多種留言系統**：Artalk、Twikoo、Waline
 - ✅ **雙留言系統**：可同時啟用兩套
-- ✅ **分享**：Share.js 與 AddToAny
-- ✅ **即時客服**：Chatra、Tidio 或 Crisp
 
 ### 📊 分析與統計
-- ✅ **瀏覽統計**：不蒜子計數器
-- ✅ **網站分析**：Google Analytics、百度統計、Cloudflare Analytics、Microsoft Clarity 或 Umami
+- ✅ **瀏覽統計**：Vercount API 與自訂元素 ID
 - ✅ **搜尋引擎驗證**：Google 與百度
-- ✅ **廣告**：Google AdSense 與自訂廣告版位
 
 ### 🎪 視覺效果
 - ✅ **打字特效**：activate_power_mode 動畫
@@ -182,11 +151,9 @@ npm update hexo-theme-butterfly
 - ✅ **PWA**：漸進式網頁應用
 - ✅ **複製保護**：停用複製或附加版權聲明
 - ✅ **主題自訂**：可更換網站配色
-- ✅ **圖表**：Mermaid 流程圖與 Chart.js 圖表
+- ✅ **圖表**：ECharts、Mermaid 與 Chart.js
 - ✅ **樂譜**：支援 ABCJS 記譜
 - ✅ **文章系列**：將文章整理成系列
-- ✅ **instant.page**：預載頁面，加快導覽
-- ✅ **Snackbar**：優雅的提示通知
 
 ## 🤝 貢獻者
 
@@ -258,3 +225,18 @@ npm update hexo-theme-butterfly
 
 **✨ 如果這個主題對您有幫助，請給我們一顆 ⭐！**
 </div>
+
+## 分支配置與測試
+
+`navigation` 控制切頁、快取與預載，`visitor_counter` 控制訪問計數。元件選項位於各自配置段；KaTeX 建置選項位於站點的 `markdown.katex`。
+
+首次初始化使用 `DOMContentLoaded`；後續切頁會觸發 `theme:page-load`，替換內容前觸發 `theme:page-leave`。`btf.addPageFn` 註冊頁面範圍的回調，`pageCleanup` 用於釋放元件資源。
+
+以下命令在主題目錄執行。整合測試使用 web-v3 的渲染器與加密外掛，測試文章會自動清理。
+
+```sh
+npm install --no-package-lock
+npm test
+npx playwright install chromium
+TEST_MATHJAX=1 npm run test:integration -- /path/to/web-v3
+```

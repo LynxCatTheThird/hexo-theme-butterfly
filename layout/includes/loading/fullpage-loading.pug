@@ -1,3 +1,4 @@
+//- Modified in this fork.
 #loading-box
   .loading-left-bg
   .loading-right-bg
@@ -35,8 +36,9 @@ script.
       setTimeout(preloader.endLoading, 7000)
     }
 
-    if (!{theme.pjax && theme.pjax.enable}) {
-      btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
-      btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+    if (!{theme.navigation && theme.navigation.enable}) {
+      btf.addGlobalFn('navigationStart', preloader.initLoading, 'preloader_init')
+      btf.addGlobalFn('pageLoad', preloader.endLoading, 'preloader_end')
+      btf.addGlobalFn('navigationEnd', preloader.endLoading, 'preloader_end')
     }
   })()

@@ -1,3 +1,4 @@
+//- Modified in this fork.
 - const { serverURL, option, pageview } = theme.waline
 - const { lazyload, count, use } = theme.comments
 
@@ -10,8 +11,10 @@ script.
     const destroyWaline = ele => ele.destroy()
 
     const initWaline = (Fn, el = document, path = window.location.pathname) => {
+      const target = el.querySelector('#waline-wrap')
+      if (!target || !target.isConnected) return
       const waline = Fn({
-        el: el.querySelector('#waline-wrap'),
+        el: target,
         serverURL: '!{serverURL}',
         pageview: !{lazyload ? false : pageview},
         dark: 'html[data-theme="dark"]',
@@ -40,10 +43,18 @@ script.
         }
       }
 
+      let destroyed = false
+      const dispose = () => {
+        if (destroyed) return
+        destroyed = true
+        lightboxObserver && lightboxObserver.disconnect()
+        destroyWaline(waline)
+      }
+      btf.addGlobalFn('pageCleanup', dispose)
+
       if (isShuoshuo) {
         window.shuoshuoComment.destroyWaline = () => {
-          lightboxObserver && lightboxObserver.disconnect()
-          destroyWaline(waline)
+          dispose()
           if (el.children.length) {
             el.innerHTML = ''
             el.classList.add('no-comment')
@@ -52,15 +63,20 @@ script.
       }
     }
 
-    const loadWaline = (el, path) => {
-      if (initFn) initWaline(initFn, el, path)
+    const loadWaline = (el = document, path = window.location.pathname) => {
+      const target = el.querySelector('#waline-wrap')
+      if (!target) return
+      const render = () => {
+        if (target.isConnected && el.querySelector('#waline-wrap') === target) initWaline(initFn, el, path)
+      }
+      if (initFn) render()
       else {
         btf.getCSS('!{url_for(theme.asset.waline_css)}')
           .then(() => import('!{url_for(theme.asset.waline_js)}'))
           .then(({ init }) => {
             initFn = init || Waline.init
-            initWaline(initFn, el, path)
             window.walineFn = initFn
+            render()
           })
       }
     }
@@ -79,4 +95,3 @@ script.
       window.loadOtherComment = loadWaline
     }
   })()
-

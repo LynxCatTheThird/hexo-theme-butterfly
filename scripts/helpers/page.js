@@ -1,8 +1,8 @@
+// Modified in this fork.
 'use strict'
 
 const { truncateContent, postDesc } = require('../common/postDesc')
 const { prettyUrls, stripHTML } = require('hexo-util')
-const crypto = require('crypto')
 const moment = require('moment-timezone')
 
 const absoluteUrlPattern = /^(?:[a-z][a-z\d+.-]*:)?\/\//i
@@ -97,10 +97,6 @@ hexo.extend.helper.register('cloudTags', function (options = {}) {
 
 hexo.extend.helper.register('urlNoIndex', function (url = null, trailingIndex = false, trailingHtml = false) {
   return prettyUrls(url || this.url, { trailing_index: trailingIndex, trailing_html: trailingHtml })
-})
-
-hexo.extend.helper.register('md5', function (path) {
-  return crypto.createHash('md5').update(decodeURI(this.url_for(path, { relative: false }))).digest('hex')
 })
 
 hexo.extend.helper.register('injectHtml', data => {

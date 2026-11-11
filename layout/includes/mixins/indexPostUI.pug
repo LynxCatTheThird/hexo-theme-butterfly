@@ -1,3 +1,4 @@
+//- Modified in this fork.
 mixin indexPostUI()
   - const indexLayout = theme.index_layout
   - const masonryLayoutClass = [6, 7].includes(indexLayout) ? 'masonry' : ''
@@ -73,16 +74,6 @@ mixin indexPostUI()
                 - const commentLink = url_for(link) + '#post-comment'
 
                 case commentSystem
-                  when 'Disqus'
-                  when 'Disqusjs'
-                    +countBlockInIndex
-                      a.disqus-count(href=full_url_for(link) + '#post-comment')
-                        i.fa-solid.fa-spinner.fa-spin
-                  when 'Valine'
-                    +countBlockInIndex
-                      a(href=commentLink)
-                        span.valine-comment-count(data-xid=url_for(link))
-                          i.fa-solid.fa-spinner.fa-spin
                   when 'Waline'
                     +countBlockInIndex
                       a(href=commentLink)
@@ -92,15 +83,6 @@ mixin indexPostUI()
                     +countBlockInIndex
                       a.twikoo-count(href=commentLink)
                         i.fa-solid.fa-spinner.fa-spin
-                  when 'Facebook Comments'
-                    +countBlockInIndex
-                      a(href=commentLink)
-                        span.fb-comments-count(data-href=urlNoIndex(article.permalink))
-                  when 'Remark42'
-                    +countBlockInIndex
-                      a(href=commentLink)
-                        span.remark42__counter(data-url=urlNoIndex(article.permalink))
-                          i.fa-solid.fa-spinner.fa-spin
                   when 'Artalk'
                     +countBlockInIndex
                       a(href=commentLink)
@@ -111,9 +93,5 @@ mixin indexPostUI()
             - const content = postDesc(article)
             if content
               .content!=content
-
-        if theme.ad && theme.ad.index
-          if (index + 1) % 3 === 0
-            .recent-post-item.ads-wrap!= theme.ad.index
 
     include ../pagination.pug
